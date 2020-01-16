@@ -18,12 +18,8 @@ import { StorageComponent } from './main/storage/storage/storage.component';
 import { AuthGuard } from './users/auth/auth.guard';
 
 const routes: Routes = [
-  {path: 'profile', component: ProfileComponent, canActivate: [AuthGuard]},
-  {path: 'register', component: RegisterComponent},
-  {path: 'login', component: LoginComponent},
-  {path: 'about', component: AboutComponent},
-  {path: '', component: MainComponent, canActivate: [AuthGuard], children: [
-    { path: '',  component: MainComponent, canActivate: [AuthGuard]},
+  {path: '',  component: MainComponent, canActivate: [AuthGuard], children: [
+    //{ path: '',  component: MainComponent, canActivate: [AuthGuard]},
     { path: 'clients', children: [
       { path: '',  component: ClientsComponent, canActivate: [AuthGuard]},
       { path: 'register',  component: ClientsRegisterComponent, canActivate: [AuthGuard]},
@@ -36,8 +32,12 @@ const routes: Routes = [
       { path: 'archive', component: RequestsArchiveComponent, canActivate: [AuthGuard]},
     ]},
     { path: 'storage',  component: StorageComponent, canActivate: [AuthGuard]},
-    { path: '**', component: AboutComponent}
   ]},
+  { path: 'profile', component: ProfileComponent, canActivate: [AuthGuard]},
+  { path: 'register', component: RegisterComponent},
+  { path: 'login', component: LoginComponent},
+  { path: 'about', component: AboutComponent},
+  { path: '**', component: AboutComponent}
 ];
 
 @NgModule({

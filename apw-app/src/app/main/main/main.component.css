@@ -2,16 +2,16 @@
     grid-area: content;
 }
 .main {
-    height: 100vh;
+    height: 100%;
     width: 100%;
     display: grid;
     grid-template-areas: "menu view";
-    grid-template-rows: 100vh;
+    grid-template-rows: 1fr;
     grid-template-columns: 8em 1fr;
 }
 .menu {
     grid-area: menu;
-    height: 100%;
+    height: calc(100% - 2em);
     background-color: #f4f4f4;
     margin-top: 2em;
     padding: 0.5em;
