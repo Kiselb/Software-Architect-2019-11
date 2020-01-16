@@ -1,0 +1,66 @@
+:host {
+    grid-area: content;
+}
+.prompt {
+    font-family: inherit;
+    font-size: 1.3125em;
+    margin: 10vh auto 0 auto;
+    text-align: center;
+}
+.login {
+    margin-top: 2vh;
+}
+::placeholder {
+    color: #BBB;
+    opacity: 1;
+}
+.login__input {
+    display: block;
+    width: 13.75em; /*220px; context 16px*/
+    height: 2.125em; /*34px; context 16px*/
+    font-family: inherit;
+    font-size: 0.875em; /*14px; context 16px*/;
+    padding: 0.375em 0.25em 0.375em 0.25em; /*6px 4px 6px 4px; context 16px*/
+    box-sizing: border-box;
+    border: 1px solid #DFDFDF;
+    text-align: center;
+}
+.login__input-place {
+    display: block;
+    margin: 0 auto 0.6875em auto; /*11px; context 16px*/;
+}
+.login__button {
+    width: 13.75em; /*220px; context 16px*/
+    height: 2.125em; /*34px; context 16px*/
+    font-family: inherit;
+    font-size: 0.875em; /*14px; context 16px*/;
+    background-color: #EAEAEA;
+    color: #888;
+    border: 1px solid #DFDFDF;
+    border-radius: 2px;
+}
+.login__button-place {
+    display: block;
+    margin: 0 auto 0.625em auto; /*10px; context 16px*/;
+}
+.login__button-place:hover {
+    color: #000 !important;
+}
+.login__button-place:active:hover {
+    color: #FFF !important;
+    background-color:#000 !important;
+}
+.login__restore {
+    font-size: 0.875em; /*14px; context 16px*/
+    color: #BFBFBF;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+}
+.login__restore-place {
+    display: block;
+    margin-top:1.5em; /*24px; context 16px*/
+}
+.login__restore-place:hover {
+    color: #000 !important;
+}

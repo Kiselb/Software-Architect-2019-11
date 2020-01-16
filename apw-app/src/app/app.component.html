@@ -1,0 +1,25 @@
+<div class="main">
+  <div class="header-empty1"></div>
+  <div class="header-empty2"></div>
+  <div class="header-empty3"></div>
+  <div class="header-icon-background"></div>
+  <div class="header-icon">
+      <div class="icon icon-place icon-visibility icon-active">&#9776;</div>
+  </div>
+  <div class="header-logo-background"></div>
+  <div class="header-logo"><a class="header-logo-link" [routerLink]="['']">LEGION</a></div>       
+  <div class="header-navpanel-background"></div>
+  <div class="header-navpanel">
+      <a [routerLink]="['/profile']" class="navitem navitem-panel" [class.navitem-visibility]="userLoggedIn()">Пользователь</a>
+      <a [routerLink]="['/register']" class="navitem navitem-panel" [class.navitem-visibility]="!userLoggedIn()">Регистрация</a>
+      <a [routerLink]="['/login']" class="navitem navitem-panel" [class.navitem-visibility]="!userLoggedIn()">Вход</a>
+      <a [routerLink]="['/logout']" class="navitem navitem-panel" [class.navitem-visibility]="userLoggedIn()" (click)="logout()">Выход</a>
+      <a [routerLink]="['/about']" class="navitem navitem-panel navitem-visibility">О&nbsp;Приложении</a>
+  </div>
+
+  <router-outlet></router-outlet>
+
+  <div class="footer">
+    &copy; Группа компаний Легион 1994 - 2020
+  </div>
+</div>

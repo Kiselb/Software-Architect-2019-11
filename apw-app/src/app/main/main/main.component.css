@@ -1,0 +1,66 @@
+:host {
+    grid-area: content;
+}
+.main {
+    height: 100vh;
+    width: 100%;
+    display: grid;
+    grid-template-areas: "menu view";
+    grid-template-rows: 100vh;
+    grid-template-columns: 8em 1fr;
+}
+.menu {
+    grid-area: menu;
+    height: 100%;
+    background-color: #f4f4f4;
+    margin-top: 2em;
+    padding: 0.5em;
+}
+.view {
+    grid-area: view;
+    height: 100%;
+}
+.menu__item {
+    font-size: 1em;
+    color: #000;
+    cursor: pointer;
+    text-decoration: none;
+}
+.menu__item-place {
+    display: block;
+    margin-bottom: 1em;
+}
+.menu__item:hover {
+    color: #FCAC45;
+}
+.menu__item:hover:active {
+    color: #000;
+}
+.menu__item__subitem {
+    font-size: 0.85em;
+    color: #000;
+    cursor: pointer;
+    text-decoration: none;
+}
+.menu__item__subitem-place {
+    display: block;
+    margin-bottom: 1em;
+    margin-left: 0.5em;
+}
+.menu__item__subitem:hover {
+    color: #FCAC45;
+}
+.menu__item__subitem:hover:active {
+    color: #000;
+}
+.menu__item__subitem-input {
+    font-size: 0.85em;
+    color: #000;
+}
+.menu__item__subitem-input-place {
+    display: block;
+    margin-bottom: 1em;
+    margin-left: 0.5em;
+    margin-right: 0.5em;
+    width: calc(100% - 0.5em - 0.5em);
+}

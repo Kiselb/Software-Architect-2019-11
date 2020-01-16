@@ -1,0 +1,17 @@
+<div class="main">
+    <div class="menu">
+        <a [routerLink]="['/clients']" class="menu__item menu__item-place">Клиенты</a>
+        <a [routerLink]="['/clients/register']" class="menu__item__subitem menu__item__subitem-place">Создать</a>
+        <input type="text" [formControl]="searchClient" class="menu__item__subitem-input menu__item__subitem-input-place">
+        <a [routerLink]="['/requests']" class="menu__item menu__item-place">Заявки</a>
+        <a [routerLink]="['/requests/register']" class="menu__item__subitem menu__item__subitem-place">Создать</a>
+        <a [routerLink]="['/requests/new']" class="menu__item__subitem menu__item__subitem-place">Новые</a>
+        <a [routerLink]="['/requests/active']" class="menu__item__subitem menu__item__subitem-place">Активные</a>
+        <a [routerLink]="['/requests/archive']" class="menu__item__subitem menu__item__subitem-place">Архив</a>
+        <input type="text" [formControl]="searchRequest" class="menu__item__subitem-input menu__item__subitem-input-place">
+        <a [routerLink]="['/storage']" class="menu__item menu__item-place">Хранилище</a>    
+    </div>
+    <div class="view">
+        <router-outlet></router-outlet>
+    </div>
+</div>
