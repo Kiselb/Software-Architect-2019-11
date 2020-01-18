@@ -1,4 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import { ClientsService } from './clients.service';
+import { Observable } from 'rxjs';
+
+import { IClientInfo, IClientResult } from '../../../data';
 
 @Component({
   selector: 'app-clients',
@@ -7,9 +11,25 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ClientsComponent implements OnInit {
 
-  constructor() { }
+  clients: IClientInfo[];
+
+  constructor(private clientsService: ClientsService) { }
+
+  viewClients(criteria: string) {
+    this.clientsService.getClients(criteria).subscribe(
+      response => {
+        console.dir(response);
+        this.clients = response.body;
+        console.dir(this.clients);
+      },
+      error => {
+        console.dir(error);
+      }
+    )
+  }
 
   ngOnInit() {
+    this.viewClients("*");
   }
 
 }

@@ -11,13 +11,13 @@ export interface IClientResult {
     clientId: string;
 }
 export interface IClientInfo {
-    uid: string;
-    clientName: string;
-    contactName: string;
-    email: string;
-    phone: string;
-    address: string;
-    statusId: number;
-    statusName: string;
-    statusReason: string
+    ClientID: string;
+    ClientName: string;
+    ContactName: string;
+    EMail: string;
+    Phone: string;
+    Address: string;
+    StatusID: number;
+    StatusName: string;
+    StatusReason: string
 }

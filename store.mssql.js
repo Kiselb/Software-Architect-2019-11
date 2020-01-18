@@ -19,3 +19,17 @@ exports.clientAddNew = function(params) {
         }
     });
 };
+exports.clients = function(params) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const request = await new mssql.Request(params.pool);
+            request.input('Criteria', mssql.NVarChar, params.criteria);
+
+            const result = await request.execute('dbo.ClientsList');
+            resolve(result);
+        }
+        catch(error) {
+            reject(error);
+        }
+    });
+};

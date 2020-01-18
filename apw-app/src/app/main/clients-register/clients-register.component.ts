@@ -42,7 +42,6 @@ export class ClientsRegisterComponent implements OnInit {
         setTimeout(() => this.indicatorHidden = true, 2000);
       },
       error => {
-        console.dir(error);
         this.actionMessage = error.message;
         setTimeout(() => this.indicatorHidden = true, 2000);
       }

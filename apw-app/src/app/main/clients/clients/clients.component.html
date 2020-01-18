@@ -1,1 +1,6 @@
-<p>clients works!</p>
+<div *ngFor="let client of clients" class="clients-list">
+    <div>
+        <span>{{client.StatusName}}</span>
+        <span>{{client.ClientName}}</span>
+    </div>
+</div>

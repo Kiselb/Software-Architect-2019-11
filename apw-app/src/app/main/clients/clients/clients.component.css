@@ -1,0 +1,17 @@
+:host {
+    grid-area: content;
+    display: grid;
+    grid-template-areas:
+        "list";
+    grid-template-rows: 1fr;
+    grid-template-columns: 1fr;
+    grid-gap: 0px;
+    font-size: 1em;
+    height: 100%;
+    padding: 2.5em;
+    box-sizing: border-box;
+    position: relative;
+}
+.clients-list {
+    grid-area: list;
+}

@@ -79,6 +79,13 @@ app.get('/', (req, res) => {
 //
 // Clients
 //
+app.get('/clients', function(req, res) {
+  let params = Object.assign({}, req.body);
+  params.pool = mssqlPool;
+  store.clients(params)
+  .then(result => { res.status(200).send(JSON.stringify(result.recordset))})
+  .catch(error => { res.status(500).send(JSON.stringify({ "result": -1, "message": error.message, "clientId": ''}))});
+});
 app.post('/clients', function(req, res) {
   let params = Object.assign({}, req.body);
   params.pool = mssqlPool;
