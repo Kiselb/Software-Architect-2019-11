@@ -2,6 +2,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -18,6 +19,7 @@ import { RequestsActiveComponent } from './main/requests_active/requests-active/
 import { RequestsArchiveComponent } from './main/requests_archive/requests-archive/requests-archive.component';
 import { RequestsRegisterComponent } from './main/requests-register/requests-register.component';
 import { ClientsRegisterComponent } from './main/clients-register/clients-register.component';
+import { JWTInterceptorService } from './users/auth/jwtinterceptor.service';
 
 @NgModule({
   declarations: [
@@ -34,7 +36,7 @@ import { ClientsRegisterComponent } from './main/clients-register/clients-regist
     RequestsActiveComponent,
     RequestsArchiveComponent,
     RequestsRegisterComponent,
-    ClientsRegisterComponent
+    ClientsRegisterComponent,
   ],
   imports: [
     BrowserModule,
@@ -43,7 +45,7 @@ import { ClientsRegisterComponent } from './main/clients-register/clients-regist
     ReactiveFormsModule,
     HttpClientModule,
   ],
-  providers: [],
+  providers: [{provide: HTTP_INTERCEPTORS, useClass: JWTInterceptorService, multi: true}],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

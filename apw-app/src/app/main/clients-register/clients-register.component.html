@@ -1,1 +1,23 @@
-<p>clients-register works!</p>
+<p class="action-header">Регистрация клиента в системе</p>
+<form class="form-parameters" [formGroup]="fgClientsParameters">
+    <label class="form-parameters-name-header">Имя клиента:</label><input type="text" formControlName="ctrlClientName" class="form-parameters-name-value">
+    <label class="form-parameters-contact-header">Контактное лицо:</label><input type="text" formControlName="ctrlContactName" class="form-parameters-contact-value">
+    <label class="form-parameters-email-header">Эл. почта:</label><input type="text" formControlName="ctrlEMail" class="form-parameters-email-value">
+    <label class="form-parameters-phone-header">Телефон:</label><input type="text" formControlName="ctrlPhone" class="form-parameters-phone-value">
+    <label class="form-parameters-address-header">Адрес:</label><input type="text" formControlName="ctrlAddress" class="form-parameters-address-value">
+    <input id="addButton" type="button" class="form-parameters-button" (click)="trySave()" value="Сохранить" [disabled]="fgClientsParameters.invalid">
+    <p class="action-message">{{actionMessage}}</p>
+</form>
+
+<div *ngIf="!indicatorHidden" class="process-indicator">
+    <div class="process-indicator__mark">
+        <div class="process-indicator__mark-circle process-indicator__mark-circle-1"></div>
+        <div class="process-indicator__mark-circle process-indicator__mark-circle-2"></div>
+        <div class="process-indicator__mark-circle process-indicator__mark-circle-3"></div>
+        <div class="process-indicator__mark-circle process-indicator__mark-circle-4"></div>
+        <div class="process-indicator__mark-circle process-indicator__mark-circle-5"></div>
+        <div class="process-indicator__mark-circle process-indicator__mark-circle-6"></div>
+        <div class="process-indicator__mark-circle process-indicator__mark-circle-7"></div>
+        <div class="process-indicator__mark-circle process-indicator__mark-circle-8"></div>
+    </div>
+</div>

@@ -8,6 +8,7 @@
     grid-template-areas: "menu view";
     grid-template-rows: 1fr;
     grid-template-columns: 8em 1fr;
+    font-size: 1.25em;
 }
 .menu {
     grid-area: menu;

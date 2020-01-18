@@ -22,7 +22,7 @@ interface IAuthResult {
 export class AuthService {
 
   redirectUrl: string;
-  
+
   constructor(private http: HttpClient) { }
 
   login(name: string, password: string) {
@@ -57,5 +57,9 @@ export class AuthService {
 
   getExpiration() {
     return moment(JSON.parse(localStorage.getItem("apw_expires_at")));
+  }
+
+  getToken() {
+    return localStorage.getItem("apw_id_token");
   }
 }

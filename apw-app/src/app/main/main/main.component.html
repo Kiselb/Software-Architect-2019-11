@@ -9,7 +9,8 @@
         <a [routerLink]="['/requests/active']" class="menu__item__subitem menu__item__subitem-place">Активные</a>
         <a [routerLink]="['/requests/archive']" class="menu__item__subitem menu__item__subitem-place">Архив</a>
         <input type="text" [formControl]="searchRequest" class="menu__item__subitem-input menu__item__subitem-input-place">
-        <a [routerLink]="['/storage']" class="menu__item menu__item-place">Хранилище</a>    
+        <a [routerLink]="['/storage']" class="menu__item menu__item-place">Хранилище</a>  
+        <input type="button" (click)="test()">      
     </div>
     <div class="view">
         <router-outlet></router-outlet>

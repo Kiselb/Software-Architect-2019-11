@@ -1,0 +1,175 @@
+:host {
+    grid-area: content;
+    display: grid;
+    grid-template-areas:
+        "header"
+        "parameters";
+    grid-template-rows: 2em auto;
+    grid-template-columns: 1fr;
+    grid-gap: 0px;
+    font-size: 1em;
+    height: 100%;
+    padding: 2.5em;
+    box-sizing: border-box;
+    position: relative;
+}
+.action-header {
+    grid-area: header;
+    display: block;
+}
+.form-parameters {
+    grid-area: parameters;
+    display: grid;
+    grid-template-areas:
+        "param-name-header param-name-value"
+        "param-contact-header param-contact-value"
+        "param-email-header param-email-value"
+        "param-phone-header param-phone-value"
+        "param-address-header param-address-value"
+        "param-button-header param-button"
+        "param-message-header message";
+    grid-template-rows: 1.75em 1.75em 1.75em 1.75em 1.75em 1.75em 4em;
+    grid-template-columns: auto 1fr;
+    font-size: 0.85em;
+    grid-gap: 0.25em;
+}
+.form-parameters-name-header {
+    grid-area: param-name-header;
+    align-self: center;
+    justify-self: start;
+}
+.form-parameters-name-value {
+    grid-area: param-name-value;
+    font: inherit;
+}
+.form-parameters-contact-header {
+    grid-area: param-contact-header;
+    align-self: center;
+    justify-self: start;
+}
+.form-parameters-contact-value {
+    grid-area: param-contact-value;
+    font: inherit;
+}
+.form-parameters-email-header {
+    grid-area: param-email-header;
+    align-self: center;
+    justify-self: start;
+}
+.form-parameters-email-value {
+    grid-area: param-email-value;
+    font: inherit;
+}
+.form-parameters-phone-header {
+    grid-area: param-phone-header;
+    align-self: center;
+    justify-self: start;
+}
+.form-parameters-phone-value {
+    grid-area: param-phone-value;
+    font: inherit;
+}
+.form-parameters-address-header {
+    grid-area: param-address-header;
+    align-self: center;
+    justify-self: start;
+}
+.form-parameters-address-value {
+    grid-area: param-address-value;
+    font: inherit;
+}
+.form-parameters-button {
+    grid-area: param-button;
+    font-size: 1em;
+    font: inherit;
+}
+.action-message {
+    grid-area: message;
+    align-self: center;
+    justify-self: center;
+}
+.process-indicator {
+    display: grid;
+    grid-template-areas: 
+        "empty1 empty2 empty3"
+        "empty4 indicator empty5"
+        "empty6 message empty8";
+    grid-template-rows: 1fr 1fr 1fr;
+    grid-template-columns: 2fr 1fr 2fr;
+    grid-gap: 0px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background-color: rgba(255,255,255,0.75);
+}
+
+/*
+    Spin indicator
+
+    https://icons8.com/cssload/en/spinners
+*/
+.process-indicator__mark {
+    grid-area: indicator;
+	position: relative;
+	width: 7.8125em; /*125px; context 16px*/
+	height: 7.8125em; /*125px;*/
+	margin: auto;
+	transform: scale(0.6);
+}
+.process-indicator__mark-circle {
+	position: absolute;
+	background-color: rgb(255,255,255);
+	height: 1.375em; /*22px;*/
+	width: 1.375em; /*22px;*/
+	border-radius: 1em; /*12px;*/
+	animation-name: fade-point;
+	animation-duration: 1.2s;
+	animation-iteration-count: infinite;
+	animation-direction: normal;
+}
+.process-indicator__mark-circle-1{
+	left: 0;
+	top: 3.1875em; /*51px;*/
+	animation-delay: 0.45s;
+}
+.process-indicator__mark-circle-2{
+	left: 0.9375em; /*15px;*/
+	top: 0.9375em; /*15px;*/
+	animation-delay: 0.6s;
+}
+.process-indicator__mark-circle-3{
+	left: 3.1875em; /*51px;*/
+	top: 0;
+	animation-delay: 0.75s;
+}
+.process-indicator__mark-circle-4{
+	right: 0.9375em; /*15px;*/
+	top: 0.9375em; /*15px;*/
+	animation-delay: 0.9s;
+}
+.process-indicator__mark-circle-5{
+	right: 0;
+	top: 3.1875em; /*51px;*/
+	animation-delay: 1.05s;
+}
+.process-indicator__mark-circle-6{
+	right: 0.9375em; /*15px;*/
+	bottom: 0.9375em; /*15px;*/
+	animation-delay: 1.2s;
+}
+.process-indicator__mark-circle-7{
+	left: 3.1875em; /*51px;*/
+	bottom: 0;
+	animation-delay: 1.35s;
+}
+.process-indicator__mark-circle-8{
+	left: 0.9375em; /*15px;*/
+	bottom: 0.9375em; /*15px;*/
+	animation-delay: 1.5s;
+}
+@keyframes fade-point {
+	0%  { background-color: rgb(0,0,0); }
+	100%{ background-color: rgb(255,255,255); }
+}
