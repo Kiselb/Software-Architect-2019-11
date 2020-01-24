@@ -1,6 +1,39 @@
-<div *ngFor="let client of clients" class="clients-list">
-    <div>
-        <span>{{client.StatusName}}</span>
-        <span>{{client.ClientName}}</span>
+<div class="clients-list">
+    <div *ngFor="let client of clients" class="clients-list__clients" (click)=selectClient(client) [ngClass]="{'clients-list__clients-current': (selectedClient) && (client.ClientID == selectedClient.ClientID) }">
+        <span class="clients-list__clients-control" (click)="editClient(client)" *ngIf="menuItemEnabled('8F33328C-8E6D-4B7C-AAA2-EA6FB6E6F3F5') && menuItemEnabled('EB200FE1-D0A3-4EE3-A818-2CFEAEBFD1BF')">E</span>
+        <span class="clients-list__clients-status clients-list__clients-status-place status-1" *ngIf="client.StatusID==1">A</span>
+        <span class="clients-list__clients-status clients-list__clients-status-place status-2" *ngIf="client.StatusID==2">P</span>
+        <span class="clients-list__clients-status clients-list__clients-status-place status-3" *ngIf="client.StatusID==3">S</span>
+        <span class="clients-list__clients-attr clients-list__clients-attr-place attr-client-name">{{client.ClientName}}</span>
+        <span class="clients-list__clients-attr clients-list__clients-attr-place attr-contact-name">{{client.ContactName}}</span>
+        <span class="clients-list__clients-attr clients-list__clients-attr-place attr-email">{{client.EMail}}</span>
+        <span class="clients-list__clients-attr clients-list__clients-attr-place attr-phone">{{client.Phone}}</span>
+        <span class="clients-list__clients-attr clients-list__clients-attr-place attr-address">{{client.Address}}</span>
+    </div>
+</div>
+
+<div *ngIf="editMode && menuItemEnabled('8F33328C-8E6D-4B7C-AAA2-EA6FB6E6F3F5') && menuItemEnabled('EB200FE1-D0A3-4EE3-A818-2CFEAEBFD1BF')" class="client-edit">
+    <p class="form-header">{{selectedClient.ClientName}}</p>
+    <form class="form-parameters" [formGroup]="fgClientsParameters">
+        <label class="form-parameters-contact-header">Контактное лицо:</label><input type="text" formControlName="ctrlContactName" class="form-parameters-contact-value">
+        <label class="form-parameters-email-header">Эл. почта:</label><input type="text" formControlName="ctrlEMail" class="form-parameters-email-value">
+        <label class="form-parameters-phone-header">Телефон:</label><input type="text" formControlName="ctrlPhone" class="form-parameters-phone-value">
+        <label class="form-parameters-address-header">Адрес:</label><input type="text" formControlName="ctrlAddress" class="form-parameters-address-value">
+        <input type="button" class="form-parameters-button-save" (click)="trySave()" value="Сохранить" [disabled]="fgClientsParameters.invalid">
+        <input type="button" class="form-parameters-button-cancel" (click)="cancelEdit()" value="Отмена">
+        <p class="action-message">{{actionMessage}}</p>
+    </form>
+    
+    <div *ngIf="!indicatorHidden" class="process-indicator">
+        <div class="process-indicator__mark">
+            <div class="process-indicator__mark-circle process-indicator__mark-circle-1"></div>
+            <div class="process-indicator__mark-circle process-indicator__mark-circle-2"></div>
+            <div class="process-indicator__mark-circle process-indicator__mark-circle-3"></div>
+            <div class="process-indicator__mark-circle process-indicator__mark-circle-4"></div>
+            <div class="process-indicator__mark-circle process-indicator__mark-circle-5"></div>
+            <div class="process-indicator__mark-circle process-indicator__mark-circle-6"></div>
+            <div class="process-indicator__mark-circle process-indicator__mark-circle-7"></div>
+            <div class="process-indicator__mark-circle process-indicator__mark-circle-8"></div>
+        </div>
     </div>
 </div>

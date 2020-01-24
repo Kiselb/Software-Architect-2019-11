@@ -10,7 +10,7 @@
   <div class="header-logo"><a class="header-logo-link" [routerLink]="['']">LEGION</a></div>       
   <div class="header-navpanel-background"></div>
   <div class="header-navpanel">
-      <a [routerLink]="['/profile']" class="navitem navitem-panel" [class.navitem-visibility]="userLoggedIn()">Пользователь</a>
+      <a [routerLink]="['/profile']" class="navitem navitem-panel" [class.navitem-visibility]="userLoggedIn()">{{userName()}}</a>
       <a [routerLink]="['/register']" class="navitem navitem-panel" [class.navitem-visibility]="!userLoggedIn()">Регистрация</a>
       <a [routerLink]="['/login']" class="navitem navitem-panel" [class.navitem-visibility]="!userLoggedIn()">Вход</a>
       <a [routerLink]="['/logout']" class="navitem navitem-panel" [class.navitem-visibility]="userLoggedIn()" (click)="logout()">Выход</a>

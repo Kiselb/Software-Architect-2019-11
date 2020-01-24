@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { Routes, RouterModule } from '@angular/router';
+import { Routes, RouterModule, ActivatedRouteSnapshot } from '@angular/router';
 
 import { MainComponent } from './main/main/main.component'
 import { LoginComponent } from './users/login/login.component';
@@ -14,6 +14,7 @@ import { RequestsArchiveComponent} from './main/requests_archive/requests-archiv
 import { RequestsRegisterComponent } from './main/requests-register/requests-register.component';
 import { ClientsRegisterComponent } from './main/clients-register/clients-register.component';
 import { StorageComponent } from './main/storage/storage/storage.component';
+import { UsersComponent } from './users/users/users.component';
 
 import { AuthGuard } from './users/auth/auth.guard';
 
@@ -21,9 +22,9 @@ const routes: Routes = [
   {path: '',  component: MainComponent, canActivate: [AuthGuard], children: [
     //{ path: '',  component: MainComponent, canActivate: [AuthGuard]},
     { path: 'clients', children: [
-      { path: '',  component: ClientsComponent, canActivate: [AuthGuard]},
+      { path: '',  component: ClientsComponent, canActivate: [AuthGuard], runGuardsAndResolvers: 'always'},
       { path: 'register',  component: ClientsRegisterComponent, canActivate: [AuthGuard]},
-    ]},
+    ], runGuardsAndResolvers: 'always'},
     { path: 'requests', children: [
       { path: '', component: RequestsComponent, canActivate: [AuthGuard]},
       { path: 'register', component: RequestsRegisterComponent, canActivate: [AuthGuard]},
@@ -32,6 +33,10 @@ const routes: Routes = [
       { path: 'archive', component: RequestsArchiveComponent, canActivate: [AuthGuard]},
     ]},
     { path: 'storage',  component: StorageComponent, canActivate: [AuthGuard]},
+    { path: 'users',  children: [
+      {path: '', component: UsersComponent, canActivate: [AuthGuard], runGuardsAndResolvers: 'always'},
+      {path: 'register', component: RegisterComponent, canActivate: [AuthGuard]}
+    ], runGuardsAndResolvers: 'always'},
   ]},
   { path: 'profile', component: ProfileComponent, canActivate: [AuthGuard]},
   { path: 'register', component: RegisterComponent},

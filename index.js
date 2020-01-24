@@ -41,15 +41,6 @@ var mssqlPool;
   mssqlPool = await new mssql.ConnectionPool(mssql_config).connect();
 })();
 
-function validateUser(name, password) {
-  if (name == 'client' && password == '12345') return true;
-  if (name == 'admin' && password == '12345') return true;
-  return false;
-}
-function userIdByName(name) {
-  if (name == 'client') return '1000';
-  return '2000';
-}
 function authRequest(req) {
   try {
     const JWTToken = req.header('Authorization');
@@ -69,12 +60,38 @@ app.use(bodyParser.json());
 
 app.get('/', (req, res) => {
   const userId = authRequest(req);
-  if (userId > 0){
-    console.log("Authorized");
+  if (userId) {
     res.send(JSON.stringify({Result: "OK"}));
   } else {
     res.sendStatus(401);
   }
+});
+//
+// Users
+//
+app.get('/users', function(req, res) {
+  let params = Object.assign({}, req.body);
+  params.pool = mssqlPool;
+  store.users(params)
+  .then(result => { res.status(200).send(JSON.stringify(result.recordset))})
+  .catch(error => { res.status(500).send(JSON.stringify({ "result": -1, "message": error.message, "userId": ''}))});
+});
+app.post('/users', function(req, res) {
+  let params = Object.assign({}, req.body);
+  params.pool = mssqlPool;
+  store.userAddNew(params)
+  .then(result => { res.status(200).send(JSON.stringify({ "result": 0, "message": 'Registered', "userId": result.output.UID }))})
+  .catch(error => { res.status(500).send(JSON.stringify({ "result": -1, "message": error.message, "userId": ''}))});
+});
+app.put('/users/:userId/status', function(req, res) {
+  const params = {
+    pool: mssqlPool,
+    userId: req.params.userId,
+    status: req.body.status,
+  }
+  store.userSetStatus(params)
+  .then(result => { res.status(200).send(JSON.stringify({ "result": 0, "message": 'Status updated', "userId": params.userId }))})
+  .catch(error => { res.status(500).send(JSON.stringify({ "result": -1, "message": error.message, "userId": ''}))});
 });
 //
 // Clients
@@ -93,24 +110,54 @@ app.post('/clients', function(req, res) {
   .then(result => { res.status(200).send(JSON.stringify({ "result": 0, "message": 'Registered', "clientId": result.output.UID }))})
   .catch(error => { res.status(500).send(JSON.stringify({ "result": -1, "message": error.message, "clientId": ''}))});
 });
+app.put('/clients/:id', function(req, res) {
+  let params = Object.assign({}, req.body);
+  params.pool = mssqlPool;
+  store.clientUpdate(params)
+  .then(result => { res.status(200).send(JSON.stringify({ "result": 0, "message": 'Updated', "clientId": params.ClientID }))})
+  .catch(error => { res.status(500).send(JSON.stringify({ "result": -1, "message": error.message, "clientId": ''}))});
+});
 //
 // Authorization
 //
-app.post('/login/', function(req, res){
-  const name = req.body.name;
-  const password = req.body.password;
-
-  if (validateUser(name, password)) {
-    const userId = userIdByName(name);
-    const jwtBearerToken = jwt.sign({}, RSA_PRIVATE_KEY, {
-      algorithm: 'RS256',
-      expiresIn: 480,
-      subject: userId
-    });
-    res.status(200).json({idToken: jwtBearerToken, expiresIn: 480});
+app.post('/authorization/', function(req, res) {
+  const userId = authRequest(req);
+  if (userId) {
+    let params = Object.assign({}, req.body);
+    params.pool = mssqlPool;
+    params.userId = userId;
+    store.authorization(params)
+    .then(result => { res.status(200).send(JSON.stringify(result.recordset))})
+    .catch(error => { res.status(500).send(JSON.stringify({ "result": -1, "message": error.message}))});
   } else {
     res.sendStatus(401);
   }
-})
+});
+//
+// Authentication
+//
+app.post('/login/', function(req, res) {
+  const name = req.body.name;
+  const password = req.body.password;
+
+  let params = Object.assign({}, req.body);
+  params.pool = mssqlPool;
+  params.name = req.body.name;
+  params.password = req.body.password;
+  store.authentication(params)
+  .then(result => {
+    if (result.output.UID) {
+      const jwtBearerToken = jwt.sign({}, RSA_PRIVATE_KEY, {
+        algorithm: 'RS256',
+        expiresIn: 480,
+        subject: result.output.UID
+      });
+      res.status(200).json({idToken: jwtBearerToken, expiresIn: 480, userName: result.output.OriginUserName});
+    } else {
+      res.sendStatus(401);
+    }
+  })
+  .catch(error => { res.status(500).send(JSON.stringify({ "result": -1, "message": error.message}))});
+});
 app.listen(3000);
 console.log('Running on http://localhost:3000');

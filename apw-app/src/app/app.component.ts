@@ -24,4 +24,8 @@ export class AppComponent {
     this.authService.logout();
     this.router.navigate(["login"]);
   }
+
+  userName() {
+    return this.authService.getUserName();
+  }
 }

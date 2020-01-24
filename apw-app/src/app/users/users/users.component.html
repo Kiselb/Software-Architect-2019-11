@@ -1,0 +1,14 @@
+<div class="users-list">
+    <div *ngFor="let user of users" class="users-list__users" (click)=selectUser(user) [ngClass]="{'users-list__users-current': (selectedUser) && (user.UserID == selectedUser.UserID) }">
+        <div class="users-list__users-attr users-list__users-attr-place" *ngIf="user.StatusID==1">&#x029BF;</div>
+        <div class="users-list__users-attr users-list__users-attr-place" *ngIf="user.StatusID==2">&#x029B7;</div>
+        <div class="users-list__users-attr users-list__users-attr-place" *ngIf="user.StatusID==3">&#x02297;</div>
+        <div class="users-list__users-attr users-list__users-attr-place users-list__users-action" (click)="trySetStatus(user, 2)">Suspend</div>
+        <div class="users-list__users-attr users-list__users-attr-place users-list__users-action" (click)="trySetStatus(user, 1)">Activate</div>
+        <div class="users-list__users-attr users-list__users-attr-place users-list__users-action" (click)="trySetStatus(user, 3)">Delete</div>
+        <div class="users-list__users-attr users-list__users-attr-place attr-role-code">{{user.RoleCode}}</div>
+        <div class="users-list__users-attr users-list__users-attr-place attr-user-name">{{user.UserName}}</div>
+        <div class="users-list__users-attr users-list__users-attr-place attr-email">{{user.EMail}}</div>
+        <div class="users-list__users-attr users-list__users-attr-place attr-clientname">{{user.ClientName}}</div>
+    </div>
+</div>

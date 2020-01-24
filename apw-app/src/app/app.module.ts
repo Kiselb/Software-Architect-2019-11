@@ -20,6 +20,7 @@ import { RequestsArchiveComponent } from './main/requests_archive/requests-archi
 import { RequestsRegisterComponent } from './main/requests-register/requests-register.component';
 import { ClientsRegisterComponent } from './main/clients-register/clients-register.component';
 import { JWTInterceptorService } from './users/auth/jwtinterceptor.service';
+import { UsersComponent } from './users/users/users.component';
 
 @NgModule({
   declarations: [
@@ -37,6 +38,7 @@ import { JWTInterceptorService } from './users/auth/jwtinterceptor.service';
     RequestsArchiveComponent,
     RequestsRegisterComponent,
     ClientsRegisterComponent,
+    UsersComponent,
   ],
   imports: [
     BrowserModule,

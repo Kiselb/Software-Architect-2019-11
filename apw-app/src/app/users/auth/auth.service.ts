@@ -13,7 +13,8 @@ interface ILogin {
 
 interface IAuthResult {
   idToken: string,
-  expiresIn: number
+  expiresIn: number,
+  userName: string
 }
 
 @Injectable({
@@ -30,7 +31,7 @@ export class AuthService {
 
     return this.http
       .post<IAuthResult>(AUTH_URL, login)
-      .pipe(tap<IAuthResult>(response => this.setSession(response)))
+      .pipe(tap<IAuthResult>(response => this.setSession(response, name)))
       .pipe(shareReplay())
       .pipe(catchError(error => of(error)));
   }
@@ -40,9 +41,10 @@ export class AuthService {
     localStorage.removeItem("apw_expires_at");
   }
 
-  private setSession(authResult: IAuthResult) {
+  private setSession(authResult: IAuthResult, name: string) {
     const expiresAt = moment().add(authResult.expiresIn, 'second');
 
+    localStorage.setItem("apw_user_name", authResult.userName);
     localStorage.setItem("apw_id_token", authResult.idToken);
     localStorage.setItem("apw_expires_at", JSON.stringify(expiresAt.valueOf()));
   }
@@ -61,5 +63,9 @@ export class AuthService {
 
   getToken() {
     return localStorage.getItem("apw_id_token");
+  }
+
+  getUserName() {
+    return localStorage.getItem("apw_user_name");
   }
 }

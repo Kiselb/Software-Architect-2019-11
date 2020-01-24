@@ -30,7 +30,7 @@
         "param-message-header message";
     grid-template-rows: 1.75em 1.75em 1.75em 1.75em 1.75em 1.75em 4em;
     grid-template-columns: auto 1fr;
-    font-size: 0.85em;
+    font-size: 0.75em;
     grid-gap: 0.25em;
 }
 .form-parameters-name-header {

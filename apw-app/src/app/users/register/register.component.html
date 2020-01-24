@@ -1,1 +1,30 @@
-<p>register works!</p>
+<p class="action-header">Регистрация пользователя в системе</p>
+<form class="form-parameters" [formGroup]="fgUsersParameters">
+    <label class="form-parameters-name-header">Имя:</label><input type="text" formControlName="ctrlUserName" class="form-parameters-name-value">
+    <label class="form-parameters-email-header">Эл. почта:</label><input type="text" formControlName="ctrlEMail" class="form-parameters-email-value">
+    <label class="form-parameters-password-header">Пароль:</label><input type="password" formControlName="ctrlPassword" class="form-parameters-password-value">
+    <label class="form-parameters-roleid-header">Роль:</label><select formControlName="ctrlRoleId" class="form-parameters-roleid-value">
+        <option value="CA5B283C-8DB0-440C-A162-DD48644D96C9">Администратор</option>
+        <option value="5A832125-339E-4AA6-BAE2-AC3714EA81A1">Сотрудник</option>
+        <option value="F1481913-3890-48C7-9FDD-CB553A5E0E2C">Пользователь (Клиент)</option>
+    </select>
+    <label class="form-parameters-clientid-header">Клиент:</label><select formControlName="ctrlClientId" class="form-parameters-clientid-value">
+        <option *ngFor="let client of (clients$ | async)" [value]="client.ClientID">{{client.ClientName}}</option>
+    </select>
+    <input type="button" class="form-parameters-button-save" (click)="trySave()" value="Сохранить" [disabled]="fgUsersParameters.invalid">
+    <input type="button" class="form-parameters-button-cancel" (click)="cancel()" value="Отмена">
+    <p class="action-message">{{actionMessage}}</p>
+</form>
+
+<div *ngIf="!indicatorHidden" class="process-indicator">
+    <div class="process-indicator__mark">
+        <div class="process-indicator__mark-circle process-indicator__mark-circle-1"></div>
+        <div class="process-indicator__mark-circle process-indicator__mark-circle-2"></div>
+        <div class="process-indicator__mark-circle process-indicator__mark-circle-3"></div>
+        <div class="process-indicator__mark-circle process-indicator__mark-circle-4"></div>
+        <div class="process-indicator__mark-circle process-indicator__mark-circle-5"></div>
+        <div class="process-indicator__mark-circle process-indicator__mark-circle-6"></div>
+        <div class="process-indicator__mark-circle process-indicator__mark-circle-7"></div>
+        <div class="process-indicator__mark-circle process-indicator__mark-circle-8"></div>
+    </div>
+</div>
