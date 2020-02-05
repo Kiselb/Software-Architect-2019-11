@@ -99,6 +99,132 @@ exports.clients = function(params) {
         }
     });
 };
+exports.subdivisions = function(params) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const request = await new mssql.Request(params.pool);
+            const result = await request.execute('dbo.SubdivisionsList');
+            resolve(result);
+        }
+        catch(error) {
+            reject(error);
+        }
+    });
+};
+exports.serviceRequestsTypes = function(params) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const request = await new mssql.Request(params.pool);
+            const result = await request.execute('dbo.ServiceRequestsTypesList');
+            resolve(result);
+        }
+        catch(error) {
+            reject(error);
+        }
+    });
+};
+exports.serviceRequestRegisterFile = function(params) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const request = await new mssql.Request(params.pool);
+
+            request.input('xml', mssql.Xml, params.xml);
+            request.output('ServiceRequestID', mssql.UniqueIdentifier);
+
+            const result = await request.execute('dbo.ServiceRequestsAddNew');
+            resolve(result.output.ServiceRequestID);
+        }
+        catch(error) {
+            reject(error);
+        }
+    });
+};
+exports.serviceRequests = function(params) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const request = await new mssql.Request(params.pool);
+            // request.multiple = true;
+
+            request.input('Section', mssql.Int, params.section);
+            request.input('Criteria', mssql.NVarChar, params.criteria);
+            request.input('SortOrder', mssql.NVarChar, params.sortOrder);
+            request.input('SortType', mssql.NVarChar, params.sortType);
+            request.input('PageNo', mssql.Int, params.pageNo);
+            request.input('PageSize', mssql.Int, params.pageSize);
+
+            console.dir(params);
+            const result = await request.execute('dbo.ServiceRequestsList');
+            // request.execute('dbo.ServiceRequestsList', function(error, recordsets) {
+            //     if (error) {
+            //         console.log("Rejected");
+            //         reject(error);
+            //     } else {
+            //         console.log("Resolved");
+            //         console.dir(recordsets);
+            //         resolve(recordsets.length);
+            //     }
+            // });
+            console.dir(result);
+            resolve(result);
+        }
+        catch(error) {
+            reject(error);
+        }
+    });
+};
+exports.serviceRequestsHeader = function(params) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const request = await new mssql.Request(params.pool);
+
+            request.input('SRID', mssql.UniqueIdentifier, params.srid);
+
+            console.dir(params);
+            const result = await request.execute('dbo.ServiceRequestsHeader');
+            console.dir(result);
+            resolve(result);
+        }
+        catch(error) {
+            reject(error);
+        }
+    });
+};
+exports.serviceRequestsHeaderUpdate = function(params) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const request = await new mssql.Request(params.pool);
+
+            request.input('SRID', mssql.UniqueIdentifier, params.srid);
+            request.input('DueDate', mssql.DateTime, params.DueDate);
+            request.input('Remarks', mssql.NVarChar, params.Remarks);
+
+            console.dir(params);
+            const result = await request.execute('dbo.ServiceRequestsHeaderUpdate');
+            console.dir(result);
+            resolve(result);
+        }
+        catch(error) {
+            reject(error);
+        }
+    });
+};
+exports.serviceRequestsDetails = function(params) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const request = await new mssql.Request(params.pool);
+
+            request.input('ServiceRequestID', mssql.UniqueIdentifier, params.srid);
+
+            console.dir(params);
+            const result = await request.execute('dbo.ServiceRequestsDetails');
+            console.dir(result);
+            resolve(result);
+        }
+        catch(error) {
+            reject(error);
+        }
+    });
+};
 exports.authorization = function(params) {
     return new Promise(async (resolve, reject) => {
         try {

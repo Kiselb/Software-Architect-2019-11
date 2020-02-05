@@ -1,0 +1,13 @@
+<p>Редактирование параметров заявки на обслуживание</p>
+<div mat-dialog-content>
+    <mat-form-field>
+        <input matInput type="datetime-local" placeholder="Требуемая дата" [(ngModel)]="local_data.DueDate">
+    </mat-form-field>
+    <mat-form-field>
+        <textarea matInput placeholder="Комментарий" [(ngModel)]="local_data.Remarks"></textarea>
+    </mat-form-field>
+</div>
+<div mat-dialog-actions>
+    <button mat-button (click)="doSave()">Сохранить</button>
+    <button mat-button (click)="closeDialog()" mat-flat-button color="warn">Отмена</button>
+</div>

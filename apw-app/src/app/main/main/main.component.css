@@ -1,5 +1,7 @@
 :host {
     grid-area: content;
+    min-height: 0 !important;
+    min-width: 0 !important;
 }
 .main {
     height: 100%;
@@ -19,7 +21,9 @@
 }
 .view {
     grid-area: view;
-    height: 100%;
+    min-height: 0 !important;
+    min-width: 0 !important;
+    /*height: 100%;*/
 }
 .menu__item {
     font-size: 1em;

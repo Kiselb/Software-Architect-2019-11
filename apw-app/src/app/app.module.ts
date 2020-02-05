@@ -4,6 +4,16 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 
+import { MatSliderModule } from '@angular/material/slider';
+import { MatTableModule } from '@angular/material';
+import {
+  MatPaginatorModule,
+  MatDialogModule, 
+  MatFormFieldModule,
+  MatInputModule,
+  MatButtonModule,
+} from '@angular/material';
+
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { LoginComponent } from './users/login/login.component';
@@ -21,6 +31,11 @@ import { RequestsRegisterComponent } from './main/requests-register/requests-reg
 import { ClientsRegisterComponent } from './main/clients-register/clients-register.component';
 import { JWTInterceptorService } from './users/auth/jwtinterceptor.service';
 import { UsersComponent } from './users/users/users.component';
+import { SubdivisionsComponent } from './main/subdivisions/subdivisions/subdivisions.component';
+import { SubdivisionsRegisterComponent } from './main/subdivisions/subdivisions-register/subdivisions-register.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ServiceRequestEditDialogComponent } from './main/requests/service-request-edit-dialog/service-request-edit-dialog.component';
+import { ServiceRequestDetailsComponent } from './main/requests/service-request-details/service-request-details.component';
 
 @NgModule({
   declarations: [
@@ -39,6 +54,10 @@ import { UsersComponent } from './users/users/users.component';
     RequestsRegisterComponent,
     ClientsRegisterComponent,
     UsersComponent,
+    SubdivisionsComponent,
+    SubdivisionsRegisterComponent,
+    ServiceRequestEditDialogComponent,
+    ServiceRequestDetailsComponent,
   ],
   imports: [
     BrowserModule,
@@ -46,8 +65,19 @@ import { UsersComponent } from './users/users/users.component';
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
+    BrowserAnimationsModule,
+    MatSliderModule,
+    MatTableModule,
+    MatPaginatorModule,
+    MatDialogModule, 
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
   ],
-  providers: [{provide: HTTP_INTERCEPTORS, useClass: JWTInterceptorService, multi: true}],
+  entryComponents: [
+    ServiceRequestEditDialogComponent
+  ],
+  providers: [HttpClientModule, HttpClient, {provide: HTTP_INTERCEPTORS, useClass: JWTInterceptorService, multi: true}],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

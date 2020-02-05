@@ -1,1 +1,52 @@
-<p>requests-register works!</p>
+<p class="action-header">Регистрация заявки клиента (загрузка файла)</p>
+<div class="command-panel">
+    <a class="command command-place" (click)="uploadFile()" [class.command-disabled]="fgParameters.invalid || fgSelectFile.invalid">Загрузить</a>
+    <div class="command command-place" (click)="openFileDialog()">Файл
+        <form class="command__file" [formGroup]="fgSelectFile">
+            <input type="file" formControlName="ctrlFileName" (change)="onChangeFile($event)" name="file" #selectfilesinput required>
+        </form>
+    </div>
+    <div class="command command-place command-faded">{{(formDataSendFile)?(formDataSendFile.get('file').name):("")}}</div>
+</div>
+<form class="form-parameters" [formGroup]="fgParameters">
+    <label class="form-parameters-client-header">Клиент:</label><select formControlName="ctrlClientId" class="form-parameters-client-value">
+        <option *ngFor="let client of (clients$ | async)" [value]="client.ClientID">{{client.ClientName}}</option>
+    </select>
+    <label class="form-parameters-subdivision-header">Площадка:</label><select formControlName="ctrlSubdivisionId" class="form-parameters-subdivision-value">
+        <option *ngFor="let subdivision of (subdivisions$ | async)" [value]="subdivision.SubdivisionID">{{subdivision.SubdivisionName}}</option>
+    </select>
+    <label class="form-parameters-type-header">Тип:</label><select formControlName="ctrlTypeId" class="form-parameters-type-value">
+        <option *ngFor="let type of (types$ | async)" [value]="type.ServiceRequestTypeID">{{type.ServiceRequestTypeName}}</option>
+    </select>
+    <label class="form-parameters-duedate-header">Дата:</label><input type="datetime-local" formControlName="ctrlDueDate" class="form-parameters-duedate-value">
+    <label class="form-parameters-remarks-header">Комментарий:</label><textarea class="form-parameters-remarks-value" formControlName="ctrlRemarks"></textarea>
+</form>
+
+<div class="actions-panel">
+
+</div>
+<div class="messages-panel">
+
+</div>
+<!--
+<div *ngIf="(loadingFileState$ | async) === LOADING_FILE_STATE.INPROCESS || (loadingFileState$ | async) === LOADING_FILE_STATE.OK || (loadingFileState$ | async) === LOADING_FILE_STATE.FAILED" class="process-indicator">
+    <div *ngIf="(loadingFileState$ | async) === LOADING_FILE_STATE.INPROCESS" class="process-indicator__mark">
+        <div class="process-indicator__mark-circle process-indicator__mark-circle-1"></div>
+        <div class="process-indicator__mark-circle process-indicator__mark-circle-2"></div>
+        <div class="process-indicator__mark-circle process-indicator__mark-circle-3"></div>
+        <div class="process-indicator__mark-circle process-indicator__mark-circle-4"></div>
+        <div class="process-indicator__mark-circle process-indicator__mark-circle-5"></div>
+        <div class="process-indicator__mark-circle process-indicator__mark-circle-6"></div>
+        <div class="process-indicator__mark-circle process-indicator__mark-circle-7"></div>
+        <div class="process-indicator__mark-circle process-indicator__mark-circle-8"></div>
+    </div>
+    <div *ngIf="(loadingFileState$ | async) === LOADING_FILE_STATE.OK" class="process-indicator-ok">
+        Файл загружен
+        <button class="process-indicator-button" (click)="continueAfterOK()">Продолжить</button>
+    </div>
+    <div *ngIf="(loadingFileState$ | async) === LOADING_FILE_STATE.FAILED" class="process-indicator-failed">
+        <p>{{loadingFileError$ | async}}</p>
+        <button class="process-indicator-button" (click)="continueAfterFAILED()">Продолжить</button>
+    </div>
+</div>
+-->

@@ -1,0 +1,97 @@
+/*
+    https://blog.angular-university.io/angular-material-data-table/
+    https://stackoverflow.com/questions/43311943/prevent-content-from-expanding-grid-items
+    https://stackoverflow.com/questions/52861086/how-come-minmax0-1fr-works-for-long-elements-while-1fr-doesnt
+    https://medium.com/@ole.ersoy/making-the-angular-material-data-table-rows-fit-content-f227f4d9355e
+*/
+:host {
+    grid-area: content;
+    display: grid;
+    grid-template-areas:
+        "header" 
+        "requests";
+    grid-template-rows: 2em 1fr;
+    grid-template-columns: 1fr;
+    grid-gap: 0px;
+    grid-gap: 0px;
+    font-size: 1em;
+    min-height: 0 !important;
+    min-width: 0 !important;
+    max-height: 100% !important;
+    max-width: 100% !important;
+    /*height: 100% !important;
+    width: 100% !important;*/
+    padding: 2.5em;
+    overflow: auto;
+    box-sizing: border-box;
+    position: relative;
+}
+.table-container {
+    grid-area: requests;
+    overflow: scroll;
+}
+table {
+    min-width: 100%;
+}
+th.mat-column-position, td.mat-column-position {
+    padding-left: 8px;
+}
+.mat-row.hovered {
+    background: #ccc !important;
+}
+.mat-row.highlighted {
+    background: #888 !important;
+}
+.mat-row:nth-child(odd) {
+    background-color:#F2F2F2;
+}
+.loading-shade {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 56px;
+    right: 0;
+    background: rgba(0, 0, 0, 0.15);
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.mat-cell,
+.mat-header-cell {
+    white-space: nowrap;
+    vertical-align: middle;
+    padding-right: 0.25em;
+}
+/*
+    Column Widths
+*/
+.mat-column-Open {
+    min-width: 4em;
+}
+.mat-column-DueDate {
+    min-width: 10em;
+}
+.mat-column-ServiceRequestTypeCode {
+    min-width: 2.75em;
+}
+.mat-column-StatusCode {
+    min-width: 2.75em;
+    border-right: 1px solid #e0e0e0;
+}
+.mat-column-ClientName {
+    min-width: 11em;
+    padding-left: 8px;
+}
+.mat-column-Remarks {
+    min-width: 125em;
+    padding-left: 8px;
+}
+.editAction {
+    display: inline-block;
+    width: 2em;
+    height: 2em;
+    border-radius: 50%;
+    background: khaki;
+    cursor: pointer;
+}

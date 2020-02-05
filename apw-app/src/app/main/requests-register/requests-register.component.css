@@ -1,0 +1,225 @@
+:host {
+    grid-area: content;
+    display: grid;
+    grid-template-areas:
+        "header" 
+        "commands"
+        "parameters"
+        "messages"
+        "request";
+    grid-template-rows: 2em auto auto auto 1fr;
+    grid-template-columns: 1fr;
+    grid-gap: 0px;
+    grid-gap: 0px;
+    font-size: 1em;
+    height: 100%;
+    padding: 2.5em;
+    box-sizing: border-box;
+    position: relative;
+}
+.action-header {
+    grid-area: header;
+    display: block;
+}
+.command-panel {
+    grid-area: commands;
+    justify-self: start;
+    align-self: start;
+}
+.command {
+    font-size: 0.75em;
+    color: #000;
+    cursor: pointer;
+    text-decoration: none;
+}
+.command:hover {
+    color: #FCAC45;
+}
+.command:active:hover {
+    color: #000;
+}
+.command-place {
+    display: inline-block;
+    padding-right: 4vw;
+}
+.command-faded {
+    color: #ACACAC;
+}
+.command-disabled {
+    color: #ACACAC !important;
+}
+.command__file {
+    display: none;
+}
+.form-parameters {
+    grid-area: parameters;
+    display: grid;
+    grid-template-areas:
+        "param-client-header param-client-value"
+        "param-subdivision-header param-subdivision-value"
+        "param-type-header param-type-value"
+        "param-duedate-header param-duedate-value"
+        "param-remarks-header param-remarks-value";
+    grid-template-rows: 1.75em 1.75em 1.75em auto 3.5em;
+    grid-template-columns: auto 1fr;
+    font-size: 0.75em;
+    grid-gap: 0.25em;
+    margin-top: 2.5em;
+}
+.form-parameters-client-header {
+    grid-area: param-client-header;
+    align-self: center;
+    justify-self: start;
+}
+.form-parameters-client-value {
+    grid-area: param-client-value;
+    font: inherit;
+}
+.form-parameters-subdivision-header {
+    grid-area: param-subdivision-header;
+    align-self: center;
+    justify-self: start;
+}
+.form-parameters-subdivision-value {
+    grid-area: param-subdivision-value;
+    font: inherit;
+}
+.form-parameters-type-header {
+    grid-area: param-type-header;
+    align-self: center;
+    justify-self: start;
+}
+.form-parameters-type-value {
+    grid-area: param-type-value;
+    font: inherit;
+}
+.form-parameters-duedate-header {
+    grid-area: param-duedate-header;
+    align-self: center;
+    justify-self: start;
+}
+.form-parameters-duedate-value {
+    grid-area: param-duedate-value;
+    font: inherit;
+}
+.form-parameters-remarks-header {
+    grid-area: param-remarks-header;
+    align-self: center;
+    justify-self: start;
+}
+.form-parameters-remarks-value {
+    grid-area: param-remarks-value;
+    font: inherit;
+    resize: none;
+}
+.actions-panel {
+    grid-area: actions;
+}
+.messages-panel {
+    grid-area: messages;
+}
+.process-indicator {
+    display: grid;
+    grid-template-areas: 
+        "empty1 empty2 empty3"
+        "empty4 indicator empty5"
+        "empty6 message empty8";
+    grid-template-rows: 1fr 1fr 1fr;
+    grid-template-columns: 2fr 1fr 2fr;
+    grid-gap: 0px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background-color: rgba(255,255,255,0.75);
+}
+.process-indicator-ok {
+    grid-area: message;
+    align-self: start;
+    justify-self: center;
+    display: block;
+    text-align: center;
+    font-size: 1.125em;
+}
+.process-indicator-failed {
+    grid-area: message;
+    align-self: start;
+    justify-self: center;
+    display: block;
+    text-align: center;
+    font-size: 1.125em;
+}
+.process-indicator-button {
+    font-size: 0.75em;
+    margin: 1vh 0 0 0;
+    padding: 0.5vh 1vw 0.5vh 1vw;
+}
+/*
+    Spin indicator
+
+    https://icons8.com/cssload/en/spinners
+*/
+.process-indicator__mark {
+    grid-area: indicator;
+	position: relative;
+	width: 7.8125em; /*125px; context 16px*/
+	height: 7.8125em; /*125px;*/
+	margin: auto;
+	transform: scale(0.6);
+}
+.process-indicator__mark-circle {
+	position: absolute;
+	background-color: rgb(255,255,255);
+	height: 1.375em; /*22px;*/
+	width: 1.375em; /*22px;*/
+	border-radius: 1em; /*12px;*/
+	animation-name: fade-point;
+	animation-duration: 1.2s;
+	animation-iteration-count: infinite;
+	animation-direction: normal;
+}
+.process-indicator__mark-circle-1{
+	left: 0;
+	top: 3.1875em; /*51px;*/
+	animation-delay: 0.45s;
+}
+.process-indicator__mark-circle-2{
+	left: 0.9375em; /*15px;*/
+	top: 0.9375em; /*15px;*/
+	animation-delay: 0.6s;
+}
+.process-indicator__mark-circle-3{
+	left: 3.1875em; /*51px;*/
+	top: 0;
+	animation-delay: 0.75s;
+}
+.process-indicator__mark-circle-4{
+	right: 0.9375em; /*15px;*/
+	top: 0.9375em; /*15px;*/
+	animation-delay: 0.9s;
+}
+.process-indicator__mark-circle-5{
+	right: 0;
+	top: 3.1875em; /*51px;*/
+	animation-delay: 1.05s;
+}
+.process-indicator__mark-circle-6{
+	right: 0.9375em; /*15px;*/
+	bottom: 0.9375em; /*15px;*/
+	animation-delay: 1.2s;
+}
+.process-indicator__mark-circle-7{
+	left: 3.1875em; /*51px;*/
+	bottom: 0;
+	animation-delay: 1.35s;
+}
+.process-indicator__mark-circle-8{
+	left: 0.9375em; /*15px;*/
+	bottom: 0.9375em; /*15px;*/
+	animation-delay: 1.5s;
+}
+@keyframes fade-point {
+	0%  { background-color: rgb(0,0,0); }
+	100%{ background-color: rgb(255,255,255); }
+}

@@ -15,6 +15,7 @@ import { RequestsRegisterComponent } from './main/requests-register/requests-reg
 import { ClientsRegisterComponent } from './main/clients-register/clients-register.component';
 import { StorageComponent } from './main/storage/storage/storage.component';
 import { UsersComponent } from './users/users/users.component';
+import { ServiceRequestDetailsComponent } from './main/requests/service-request-details/service-request-details.component';
 
 import { AuthGuard } from './users/auth/auth.guard';
 
@@ -32,6 +33,7 @@ const routes: Routes = [
       { path: 'active', component: RequestsActiveComponent, canActivate: [AuthGuard]},
       { path: 'archive', component: RequestsArchiveComponent, canActivate: [AuthGuard]},
     ]},
+    { path: 'requests/:srid', component: ServiceRequestDetailsComponent, canActivate: [AuthGuard]},
     { path: 'storage',  component: StorageComponent, canActivate: [AuthGuard]},
     { path: 'users',  children: [
       {path: '', component: UsersComponent, canActivate: [AuthGuard], runGuardsAndResolvers: 'always'},

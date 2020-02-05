@@ -6,7 +6,7 @@
         <a [routerLink]="['/requests']" class="menu__item menu__item-place" *ngIf="menuItemEnabled('741862B2-88CE-417E-9712-8AE52FEED2B4')">Заявки</a>
         <a [routerLink]="['/requests/register']" class="menu__item__subitem menu__item__subitem-place" *ngIf="menuItemEnabled('741862B2-88CE-417E-9712-8AE52FEED2B4') && menuItemEnabled('8C7849A5-9D85-4D35-AC34-8AE038BAA755')">Создать</a>
         <a [routerLink]="['/requests/new']" class="menu__item__subitem menu__item__subitem-place" *ngIf="menuItemEnabled('741862B2-88CE-417E-9712-8AE52FEED2B4')">Новые</a>
-        <a [routerLink]="['/requests/active']" class="menu__item__subitem menu__item__subitem-place" *ngIf="menuItemEnabled('741862B2-88CE-417E-9712-8AE52FEED2B4')">Активные</a>
+        <a [routerLink]="['/requests/active']" class="menu__item__subitem menu__item__subitem-place" *ngIf="menuItemEnabled('741862B2-88CE-417E-9712-8AE52FEED2B4')">Закрытые</a>
         <a [routerLink]="['/requests/archive']" class="menu__item__subitem menu__item__subitem-place" *ngIf="menuItemEnabled('741862B2-88CE-417E-9712-8AE52FEED2B4') && menuItemEnabled('6036B772-B223-4D33-BAF7-FB0983A0A610')">Архив</a>
         <input type="text" [formControl]="searchRequest" placeholder="Поиск" class="menu__item__subitem-input menu__item__subitem-input-place" *ngIf="menuItemEnabled('741862B2-88CE-417E-9712-8AE52FEED2B4')">
         <a [routerLink]="['/storage']" class="menu__item menu__item-place" *ngIf="menuItemEnabled('37D27C9E-AADA-46D3-9C2E-BD637D72D926')">Хранилище</a>  

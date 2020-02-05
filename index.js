@@ -4,7 +4,12 @@ const mssql = require('mssql');
 const cors = require('cors'); // npm install --save cors
 const bodyParser = require('body-parser'); // npm install --save body-parser
 const jwt = require('jsonwebtoken'); // npm install --save jsonwebtoken
+const fileUpload = require('express-fileupload'); // npm install --save express-fileupload
+
+const config = require('./config.json');
+
 const store = require('./store.mssql');
+const xlsx = require('./import.xlsx');
 
 const RSA_PRIVATE_KEY = `-----BEGIN RSA PRIVATE KEY-----
 MIICXAIBAAKBgHA9IScOQDRSd/pGYTZsq5juAZ+f+qpknJDD5XnhLf9Ppfmu8Fw6
@@ -45,8 +50,10 @@ function authRequest(req) {
   try {
     const JWTToken = req.header('Authorization');
     const decoded = jwt.verify(JWTToken, RSA_PUBLIC_KEY);
+    console.log(`Auth Request Token: ${JWTToken}`);
     return decoded.sub;
   } catch (exception) {
+    console.log(exception);
     return -1;
   }
 }
@@ -55,11 +62,13 @@ const app = express();
 
 app.use(express.static(path.join(__dirname + '/')));
 app.use(express.json());
+app.use(fileUpload());
 app.use(cors());
 app.use(bodyParser.json());
 
 app.get('/', (req, res) => {
   const userId = authRequest(req);
+  console.log(userId);
   if (userId) {
     res.send(JSON.stringify({Result: "OK"}));
   } else {
@@ -97,6 +106,9 @@ app.put('/users/:userId/status', function(req, res) {
 // Clients
 //
 app.get('/clients', function(req, res) {
+  const userId = authRequest(req);
+  console.log(`User ID: ${userId}`);
+
   let params = Object.assign({}, req.body);
   params.pool = mssqlPool;
   store.clients(params)
@@ -116,6 +128,88 @@ app.put('/clients/:id', function(req, res) {
   store.clientUpdate(params)
   .then(result => { res.status(200).send(JSON.stringify({ "result": 0, "message": 'Updated', "clientId": params.ClientID }))})
   .catch(error => { res.status(500).send(JSON.stringify({ "result": -1, "message": error.message, "clientId": ''}))});
+});
+//
+// Subdivisions
+//
+app.get('/subdivisions', function(req, res) {
+  let params = Object.assign({}, req.body);
+  params.pool = mssqlPool;
+  store.subdivisions(params)
+  .then(result => { res.status(200).send(JSON.stringify(result.recordset))})
+  .catch(error => { res.status(500).send(JSON.stringify({ "result": -1, "message": error.message}))});
+});
+//
+// Service Requests
+//
+app.get('/requests/types', function(req, res) {
+  const params = Object.assign({}, req.body);
+  params.pool = mssqlPool;
+  store.serviceRequestsTypes(params)
+  .then(result => { res.status(200).send(JSON.stringify(result.recordset))})
+  .catch(error => { res.status(500).send(JSON.stringify({ "result": -1, "message": error.message}))});
+});
+app.post('/requests/upload', function(req, res) {
+  if (!req.files || Object.keys(req.files).length === 0) {
+      return res.status(400).send('No files were uploaded');
+  }
+  req.files.file.mv(config.development.dstpath + req.files.file.name, function(error) {
+      if (error) {
+          return res.status(500).send(`{ "error": ${error} }`);
+      }
+      if (!((req.body.clientId) && (req.body.subdivisionId) && (req.body.typeId) && (req.body.dueDate))) {
+          return res.status(400).send(`{ "error": "Не заданы обязательные параметры импорта файла" }`);
+      }
+      xlsx.XLSXToXML(req.files.file.name, req.body.clientId, req.body.subdivisionId, req.body.typeId, req.body.dueDate, req.body.remarks)
+      .then(xml => store.serviceRequestRegisterFile({pool: mssqlPool, xml: xml}))
+      .then(srid => { console.dir(srid); res.status(200).send(JSON.stringify({"srid": srid})); })
+      .catch(error => { console.log("File upload error"); res.status(500).send(`{"error": ${error}}`); });
+  });
+});
+app.get('/requests', function(req, res) {
+  const params = Object.assign({}, req.body);
+
+  params.section = req.query.section;
+  params.criteria = req.query.criteria;
+  params.sortOrder = req.query.sortorder;
+  params.sortType = req.query.sorttype;
+  params.pageNo = req.query.page;
+  params.pageSize = req.query.pagesize;
+  params.pool = mssqlPool;
+
+  store.serviceRequests(params)
+  .then(result => { res.status(200).send(JSON.stringify(result.recordset))})
+  .catch(error => { res.status(500).send(JSON.stringify({ "result": -1, "message": error.message}))});
+});
+app.get('/requests/:srid', function(req, res) {
+  const params = Object.assign({}, req.body);
+  
+  params.srid = req.params.srid;
+  params.pool = mssqlPool;
+
+  store.serviceRequestsHeader(params)
+  .then(result => { res.status(200).send(JSON.stringify(result.recordset))})
+  .catch(error => { res.status(500).send(JSON.stringify({ "result": -1, "message": error.message}))});
+});
+app.put('/requests/:srid', function(req, res) {
+  const params = Object.assign({}, req.body);
+  
+  params.srid = req.params.srid;
+  params.pool = mssqlPool;
+
+  store.serviceRequestsHeaderUpdate(params)
+  .then(result => { res.status(200).send(JSON.stringify({ "result": 0, "message": 'Updated', "serviceRequestID": params.srid }))})
+  .catch(error => { res.status(500).send(JSON.stringify({ "result": -1, "message": error.message, "serviceRequestID": params.srid }))});
+});
+app.get('/requests/:srid/details', function(req, res) {
+  const params = Object.assign({}, req.body);
+  
+  params.srid = req.params.srid;
+  params.pool = mssqlPool;
+
+  store.serviceRequestsDetails(params)
+  .then(result => { res.status(200).send(JSON.stringify(result.recordset))})
+  .catch(error => { res.status(500).send(JSON.stringify({ "result": -1, "message": error.message}))});
 });
 //
 // Authorization
@@ -149,7 +243,7 @@ app.post('/login/', function(req, res) {
     if (result.output.UID) {
       const jwtBearerToken = jwt.sign({}, RSA_PRIVATE_KEY, {
         algorithm: 'RS256',
-        expiresIn: 480,
+        expiresIn: 480000000,
         subject: result.output.UID
       });
       res.status(200).json({idToken: jwtBearerToken, expiresIn: 480, userName: result.output.OriginUserName});
@@ -159,5 +253,6 @@ app.post('/login/', function(req, res) {
   })
   .catch(error => { res.status(500).send(JSON.stringify({ "result": -1, "message": error.message}))});
 });
+
 app.listen(3000);
 console.log('Running on http://localhost:3000');

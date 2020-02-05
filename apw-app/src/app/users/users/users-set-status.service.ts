@@ -5,7 +5,7 @@ import { HttpClient, HttpHeaders, HttpResponse } from  '@angular/common/http';
 
 import { IUserResult } from '../../data';
 
-const SERVER_URL: string = "http://localhost:3000/users";
+const SERVER_URL: string = "http://localhost:3000";
 
 @Injectable({
   providedIn: 'root'
@@ -15,6 +15,6 @@ export class UsersSetStatusService {
   constructor(private httpClient: HttpClient) { }
 
   public getClients(userId: string, status: number): Observable<IUserResult[]> {
-    return this.httpClient.put<IUserResult[]>(`${SERVER_URL}/${userId}/status/`, {status: status});
+    return this.httpClient.put<IUserResult[]>(`${SERVER_URL}/users/${userId}/status/`, {status: status});
   }
 }
