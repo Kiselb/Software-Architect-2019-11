@@ -35,7 +35,7 @@ lQvt/w+WTXCB9mmZAgMBAAE=
 -----END PUBLIC KEY-----`
 
 const mssql_config = {
-    server: "10.106.101.113",
+    server: "172.17.0.2", //server: "10.106.101.113",
     authentication: { options: { userName: "webuser", password: "mvkMVK$@#1245" }},
     options: { database: "Warehouse", useUTC: false } 
 };
@@ -43,7 +43,9 @@ const mssql_config = {
 var mssqlPool;
 
 (async function() {
+  console.log("Try to connect on MS SQL Server");
   mssqlPool = await new mssql.ConnectionPool(mssql_config).connect();
+  console.log("MS SQL Server connected successfully");
 })();
 
 function authRequest(req) {
@@ -166,8 +168,11 @@ app.post('/requests/upload', function(req, res) {
       .catch(error => { console.log("File upload error"); res.status(500).send(`{"error": ${error}}`); });
   });
 });
-app.get('/requests', function(req, res) {
+app.get('/requests',async function(req, res) {
+
   const params = Object.assign({}, req.body);
+
+  console.log("Docker version");
 
   params.section = req.query.section;
   params.criteria = req.query.criteria;
@@ -176,6 +181,18 @@ app.get('/requests', function(req, res) {
   params.pageNo = req.query.page;
   params.pageSize = req.query.pagesize;
   params.pool = mssqlPool;
+
+  try {
+    if (!mssqlPool) {
+      
+      console.log("Try to connect on MS SQL Server");
+      params.pool = await new mssql.ConnectionPool(mssql_config).connect();
+      console.log("MS SQL Server connected successfully");
+    }
+  }
+  catch(error) {
+    console.dir(error)
+  }
 
   store.serviceRequests(params)
   .then(result => { res.status(200).send(JSON.stringify(result.recordset))})
@@ -246,7 +263,7 @@ app.post('/login/', function(req, res) {
         expiresIn: 480000000,
         subject: result.output.UID
       });
-      res.status(200).json({idToken: jwtBearerToken, expiresIn: 480, userName: result.output.OriginUserName});
+      res.status(200).json({idToken: jwtBearerToken, expiresIn: 480000000, userName: result.output.OriginUserName});
     } else {
       res.sendStatus(401);
     }
