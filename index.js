@@ -35,7 +35,7 @@ lQvt/w+WTXCB9mmZAgMBAAE=
 -----END PUBLIC KEY-----`
 
 const mssql_config = {
-    server: "172.17.0.2", //server: "10.106.101.113",
+    server: "10.106.101.113", //server: "172.17.0.2",
     authentication: { options: { userName: "webuser", password: "mvkMVK$@#1245" }},
     options: { database: "Warehouse", useUTC: false } 
 };
@@ -60,6 +60,24 @@ function authRequest(req) {
   }
 }
 
+function authorizationCheck(userId, permissionId) {
+  const params = {
+    userId: userId,
+    permissionId: permissionId,
+    pool: mssqlPool,
+  }
+  return new Promise((resolve, reject) => {
+    store.getPermission(params)
+    .then(result => {
+      if (result.returnValue === 0) {
+        resolve();
+      } else {
+        reject({ access: "denied"});
+      }
+    })
+  });
+}
+
 const app = express();
 
 app.use(express.static(path.join(__dirname + '/')));
@@ -78,15 +96,70 @@ app.get('/', (req, res) => {
   }
 });
 //
+// Authorization
+//
+app.post('/authorization', function(req, res) {
+  const userId = authRequest(req);
+  if (userId) {
+    let params = Object.assign({}, req.body);
+    params.pool = mssqlPool;
+    params.userId = userId;
+    store.authorization(params)
+    .then(result => { res.status(200).send(JSON.stringify(result.recordset))})
+    .catch(error => { res.status(500).send(JSON.stringify({ "result": -1, "message": error.message}))});
+  } else {
+    res.sendStatus(401);
+  }
+});
+//
+// Authentication
+//
+app.post('/login', function(req, res) {
+  const name = req.body.name;
+  const password = req.body.password;
+
+  let params = Object.assign({}, req.body);
+  params.pool = mssqlPool;
+  params.name = req.body.name;
+  params.password = req.body.password;
+  store.authentication(params)
+  .then(result => {
+    if (result.output.UID) {
+      const jwtBearerToken = jwt.sign({}, RSA_PRIVATE_KEY, {
+        algorithm: 'RS256',
+        expiresIn: 480000000,
+        subject: result.output.UID
+      });
+      res.status(200).json({idToken: jwtBearerToken, expiresIn: 480000000, userName: result.output.OriginUserName});
+    } else {
+      res.sendStatus(401);
+    }
+  })
+  .catch(error => { res.status(500).send(JSON.stringify({ "result": -1, "message": error.message}))});
+});
+//
 // Users
 //
 app.get('/users', function(req, res) {
   let params = Object.assign({}, req.body);
   params.pool = mssqlPool;
-  store.users(params)
+  authorizationCheck(authRequest(req), '2BD877D3-AD0E-4404-86B8-6F7E252DEFD8')
+  .then(() => store.users(params))
   .then(result => { res.status(200).send(JSON.stringify(result.recordset))})
-  .catch(error => { res.status(500).send(JSON.stringify({ "result": -1, "message": error.message, "userId": ''}))});
+  .catch(error => {
+    if (error.access) {
+      res.status(401).send(JSON.stringify({ "result": -1, "message": "Access denied", "userId": ''}));
+    } else {
+      res.status(500).send(JSON.stringify({ "result": -1, "message": error.message, "userId": ''}))
+    }
+  });
 });
+//   let params = Object.assign({}, req.body);
+//   params.pool = mssqlPool;
+//   store.users(params)
+//   .then(result => { res.status(200).send(JSON.stringify(result.recordset))})
+//   .catch(error => { res.status(500).send(JSON.stringify({ "result": -1, "message": error.message, "userId": ''}))});
+// });
 app.post('/users', function(req, res) {
   let params = Object.assign({}, req.body);
   params.pool = mssqlPool;
@@ -226,48 +299,6 @@ app.get('/requests/:srid/details', function(req, res) {
 
   store.serviceRequestsDetails(params)
   .then(result => { res.status(200).send(JSON.stringify(result.recordset))})
-  .catch(error => { res.status(500).send(JSON.stringify({ "result": -1, "message": error.message}))});
-});
-//
-// Authorization
-//
-app.post('/authorization/', function(req, res) {
-  const userId = authRequest(req);
-  if (userId) {
-    let params = Object.assign({}, req.body);
-    params.pool = mssqlPool;
-    params.userId = userId;
-    store.authorization(params)
-    .then(result => { res.status(200).send(JSON.stringify(result.recordset))})
-    .catch(error => { res.status(500).send(JSON.stringify({ "result": -1, "message": error.message}))});
-  } else {
-    res.sendStatus(401);
-  }
-});
-//
-// Authentication
-//
-app.post('/login/', function(req, res) {
-  const name = req.body.name;
-  const password = req.body.password;
-
-  let params = Object.assign({}, req.body);
-  params.pool = mssqlPool;
-  params.name = req.body.name;
-  params.password = req.body.password;
-  store.authentication(params)
-  .then(result => {
-    if (result.output.UID) {
-      const jwtBearerToken = jwt.sign({}, RSA_PRIVATE_KEY, {
-        algorithm: 'RS256',
-        expiresIn: 480000000,
-        subject: result.output.UID
-      });
-      res.status(200).json({idToken: jwtBearerToken, expiresIn: 480000000, userName: result.output.OriginUserName});
-    } else {
-      res.sendStatus(401);
-    }
-  })
   .catch(error => { res.status(500).send(JSON.stringify({ "result": -1, "message": error.message}))});
 });
 

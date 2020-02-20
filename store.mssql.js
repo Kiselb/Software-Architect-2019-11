@@ -225,6 +225,21 @@ exports.serviceRequestsDetails = function(params) {
         }
     });
 };
+exports.getPermission = function(params) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const request = await new mssql.Request(params.pool);
+            request.input('UserID', mssql.UniqueIdentifier, params.userId);
+            request.input('PermissionID', mssql.UniqueIdentifier, params.permissionId);
+
+            const result = await request.execute('dbo.UsersPermissionsCheck');
+            resolve(result);
+        }
+        catch(error) {
+            reject(error);
+        }
+    });
+}
 exports.authorization = function(params) {
     return new Promise(async (resolve, reject) => {
         try {

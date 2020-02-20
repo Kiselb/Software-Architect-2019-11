@@ -5,7 +5,7 @@ import { HttpClient, HttpHeaders, HttpResponse } from  '@angular/common/http';
 
 import { IUserResult } from '../../data';
 
-const SERVER_URL: string = "http://apw.legion.ru:8000"; //"http://localhost:3000";
+const SERVER_URL: string = "http://localhost:3000"; //"http://apw.legion.ru:8000"; //"http://localhost:3000";
 
 @Injectable({
   providedIn: 'root'
