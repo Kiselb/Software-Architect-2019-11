@@ -1,16 +1,53 @@
-<div class="clients-list">
-    <div *ngFor="let client of clients" class="clients-list__clients" (click)=selectClient(client) [ngClass]="{'clients-list__clients-current': (selectedClient) && (client.ClientID == selectedClient.ClientID) }">
-        <span class="clients-list__clients-control" (click)="editClient(client)" *ngIf="menuItemEnabled('8F33328C-8E6D-4B7C-AAA2-EA6FB6E6F3F5') && menuItemEnabled('EB200FE1-D0A3-4EE3-A818-2CFEAEBFD1BF')">E</span>
-        <span class="clients-list__clients-status clients-list__clients-status-place status-1" *ngIf="client.StatusID==1">A</span>
-        <span class="clients-list__clients-status clients-list__clients-status-place status-2" *ngIf="client.StatusID==2">P</span>
-        <span class="clients-list__clients-status clients-list__clients-status-place status-3" *ngIf="client.StatusID==3">S</span>
-        <span class="clients-list__clients-attr clients-list__clients-attr-place attr-client-name">{{client.ClientName}}</span>
-        <span class="clients-list__clients-attr clients-list__clients-attr-place attr-contact-name">{{client.ContactName}}</span>
-        <span class="clients-list__clients-attr clients-list__clients-attr-place attr-email">{{client.EMail}}</span>
-        <span class="clients-list__clients-attr clients-list__clients-attr-place attr-phone">{{client.Phone}}</span>
-        <span class="clients-list__clients-attr clients-list__clients-attr-place attr-address">{{client.Address}}</span>
-    </div>
+<p class="action-header">Клиенты компании</p>
+<div class="table-container" *ngIf="!editMode">
+    <table mat-table [dataSource]="clients" matSort matSortActive="ContactName" matSortDisableClear matSortDirection="asc">
+        <ng-container matColumnDef="Open" [sticky]="true" *ngIf="menuItemEnabled('8F33328C-8E6D-4B7C-AAA2-EA6FB6E6F3F5') && menuItemEnabled('EB200FE1-D0A3-4EE3-A818-2CFEAEBFD1BF')">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear></th>
+            <td mat-cell *matCellDef="let row">
+                <span (click)="editClient(row)" class="editAction"></span>
+            </td>
+        </ng-container>
+        <ng-container matColumnDef="Status" [sticky]="true"> <!--*ngIf="menuItemEnabled('8F33328C-8E6D-4B7C-AAA2-EA6FB6E6F3F5') && menuItemEnabled('EB200FE1-D0A3-4EE3-A818-2CFEAEBFD1BF')">-->
+            <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear></th>
+            <td mat-cell *matCellDef="let row">
+                <span [ngClass]="{
+                    'clientStatus-active': row.StatusID==1,
+                    'clientStatus-paused': row.StatusID==2,
+                    'clientStatus-stopped': row.StatusID==3
+                }"></span>
+            </td>
+        </ng-container>
+        <ng-container matColumnDef="ClientName" [sticky]="true">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>Клиент</th>
+            <td mat-cell *matCellDef="let row">{{row.ClientName}}</td>
+        </ng-container>
+        <ng-container matColumnDef="ContactName" [sticky]="true">
+            <th mat-header-cell *matHeaderCellDef>Контакт</th>
+            <td mat-cell *matCellDef="let row">{{row.ContactName}}</td>
+        </ng-container>
+        <ng-container matColumnDef="EMail">
+            <th mat-header-cell *matHeaderCellDef>Эл. почта</th>
+            <td mat-cell *matCellDef="let row">{{row.EMail}}</td>
+        </ng-container>
+        <ng-container matColumnDef="Phone">
+            <th mat-header-cell *matHeaderCellDef>Телефон</th>
+            <td mat-cell *matCellDef="let row">{{row.Phone}}</td>
+        </ng-container>
+        <ng-container matColumnDef="Address">
+            <th mat-header-cell *matHeaderCellDef>Адрес</th>
+            <td mat-cell *matCellDef="let row">{{row.Address}}</td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"
+            [ngClass]="{hovered: row.hovered, highlighted: row.highlighted}"
+            (click)="highlightDrop(); row.highlighted = !row.highlighted"
+            (mouseover)="row.hovered = true"
+            (mouseout)="row.hovered = false">
+        </tr>
+    </table>
 </div>
+<mat-paginator [length]="resultsLength" [pageSize]="40" *ngIf="!editMode"></mat-paginator>
 
 <div *ngIf="editMode && menuItemEnabled('8F33328C-8E6D-4B7C-AAA2-EA6FB6E6F3F5') && menuItemEnabled('EB200FE1-D0A3-4EE3-A818-2CFEAEBFD1BF')" class="client-edit">
     <p class="form-header">{{selectedClient.ClientName}}</p>

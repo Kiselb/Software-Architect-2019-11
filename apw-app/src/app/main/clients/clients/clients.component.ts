@@ -10,6 +10,11 @@ import { IClientInfo, IClientResult } from '../../../data';
 import { ClientUpdateService } from './client-update.service';
 import { AuthorizationService } from './../../../users/auth/authorization.service';
 
+export interface ISingleHighlighted {
+  highlighted?: boolean;
+}
+
+export interface ITableClientInfo extends IClientInfo, ISingleHighlighted {}
 
 @Component({
   selector: 'app-clients',
@@ -18,9 +23,9 @@ import { AuthorizationService } from './../../../users/auth/authorization.servic
 })
 export class ClientsComponent implements OnInit {
 
-  clients: IClientInfo[];
+  clients: ITableClientInfo[];
   editMode: boolean = false;
-  selectedClient: IClientInfo;
+  selectedClient: ITableClientInfo;
   actionMessage: string = "";
   indicatorHidden: boolean = true;
   navigationSubscription;
@@ -32,12 +37,25 @@ export class ClientsComponent implements OnInit {
     ctrlAddress: new FormControl(null, [Validators.required, Validators.min(16), Validators.max(255)]),
   });
 
+  highlight(element: any) {
+    element.highlighted = !element.highlighted;
+  }
+  highlightDrop() {
+    this.clients.map(element => { if (element.highlighted) {element.highlighted  = false }; return element; })
+  }
+  
+displayedColumns: string[] = ['Status', 'ClientName', 'ContactName', 'EMail', 'Phone', 'Address'];
+
   constructor(
     private router: Router,
     private clientsService: ClientsService,
     private clientUpdateService: ClientUpdateService,
     private authorizationService: AuthorizationService
-  ) { }
+  ) {
+    if (this.menuItemEnabled('8F33328C-8E6D-4B7C-AAA2-EA6FB6E6F3F5') && this.menuItemEnabled('EB200FE1-D0A3-4EE3-A818-2CFEAEBFD1BF')) {
+      this.displayedColumns = ['Status', 'Open', 'ClientName', 'ContactName', 'EMail', 'Phone', 'Address'];
+    }
+   }
 
   viewClients(criteria: string, presetUID: string) {
     this.selectedClient = null;
@@ -48,6 +66,7 @@ export class ClientsComponent implements OnInit {
         this.clients = data;
         if (presetUID) {
           this.selectedClient = this.clients.find(client => client.ClientID === presetUID)
+          this.selectedClient.highlighted = true;
         }
         console.dir(this.clients);
       },
@@ -56,10 +75,10 @@ export class ClientsComponent implements OnInit {
       }
     )
   }
-  selectClient(client: IClientInfo) {
+  selectClient(client: ITableClientInfo) {
     this.selectedClient = client;
   }
-  editClient(client: IClientInfo) {
+  editClient(client: ITableClientInfo) {
     this.selectClient(client);
     this.editMode = true;
     this.fgClientsParameters.controls["ctrlContactName"].setValue(this.selectedClient.ContactName);
@@ -70,7 +89,7 @@ export class ClientsComponent implements OnInit {
   }
   trySave() {
     this.indicatorHidden = false;
-    const data: IClientInfo = {
+    const data: ITableClientInfo = {
       ClientID: this.selectedClient.ClientID,
       ClientName: this.selectedClient.ClientName,
       ContactName: this.fgClientsParameters.controls["ctrlContactName"].value,
@@ -83,9 +102,8 @@ export class ClientsComponent implements OnInit {
     };
     this.clientUpdateService.update(data).subscribe(
       response => {
-        console.dir(response);
-        setTimeout(() => { this.indicatorHidden = true; this.editMode = false; }, 2000);
-        this.viewClients('*', data.ClientID);
+        console.dir("Show indicator");
+        setTimeout(() => { this.indicatorHidden = true; this.editMode = false; this.viewClients('*', data.ClientID); }, 4000);
       },
       error => {
         this.actionMessage = error.message;

@@ -1,14 +1,61 @@
-<div class="users-list">
-    <div *ngFor="let user of users" class="users-list__users" (click)=selectUser(user) [ngClass]="{'users-list__users-current': (selectedUser) && (user.UserID == selectedUser.UserID) }">
-        <div class="users-list__users-attr users-list__users-attr-place" *ngIf="user.StatusID==1">&#x029BF;</div>
-        <div class="users-list__users-attr users-list__users-attr-place" *ngIf="user.StatusID==2">&#x029B7;</div>
-        <div class="users-list__users-attr users-list__users-attr-place" *ngIf="user.StatusID==3">&#x02297;</div>
-        <div class="users-list__users-attr users-list__users-attr-place users-list__users-action" (click)="trySetStatus(user, 2)">Suspend</div>
-        <div class="users-list__users-attr users-list__users-attr-place users-list__users-action" (click)="trySetStatus(user, 1)">Activate</div>
-        <div class="users-list__users-attr users-list__users-attr-place users-list__users-action" (click)="trySetStatus(user, 3)">Delete</div>
-        <div class="users-list__users-attr users-list__users-attr-place attr-role-code">{{user.RoleCode}}</div>
-        <div class="users-list__users-attr users-list__users-attr-place attr-user-name">{{user.UserName}}</div>
-        <div class="users-list__users-attr users-list__users-attr-place attr-email">{{user.EMail}}</div>
-        <div class="users-list__users-attr users-list__users-attr-place attr-clientname">{{user.ClientName}}</div>
-    </div>
+<p class="action-header">Пользователи</p>
+<div class="table-container">
+    <table mat-table [dataSource]="users" matSort matSortActive="DueDate" matSortDisableClear matSortDirection="desc">
+        <ng-container matColumnDef="Status" [sticky]="true">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear></th>
+            <td mat-cell *matCellDef="let row">
+                <span [ngClass]="{
+                    'user-active': row.StatusID==1,
+                    'user-paused': row.StatusID==2,
+                    'user-stopped': row.StatusID==3
+                }"></span>
+            </td>
+        </ng-container>
+        <ng-container matColumnDef="Suspend" [sticky]="true">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear></th>
+            <td mat-cell *matCellDef="let row" (click)="trySetStatus(row, 2)" [ngClass]="{
+                'user-status-action': row.StatusID == 1,
+                'user-status-action-not-allowed': row.StatusID == 3
+            }">Остановить</td>
+        </ng-container>
+        <ng-container matColumnDef="Activate" [sticky]="true">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear></th>
+            <td mat-cell *matCellDef="let row" (click)="trySetStatus(row, 1)" [ngClass]="{
+                'user-status-action': row.StatusID == 2,
+                'user-status-action-not-allowed': row.StatusID == 3
+            }">Активизировать</td>
+        </ng-container>
+        <ng-container matColumnDef="Stop" [sticky]="true">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear></th>
+            <td mat-cell *matCellDef="let row" (click)="trySetStatus(row, 3)" [ngClass]="{
+                'user-status-action': row.StatusID == 2,
+                'user-status-action-not-allowed': row.StatusID == 3
+            }">Закрыть</td>
+        </ng-container>
+        <ng-container matColumnDef="Role" [sticky]="true">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>Роль</th>
+            <td mat-cell *matCellDef="let row">{{row.RoleCode}}</td>
+        </ng-container>
+        <ng-container matColumnDef="UserName">
+            <th mat-header-cell *matHeaderCellDef>Имя</th>
+            <td mat-cell *matCellDef="let row">{{row.UserName}}</td>
+        </ng-container>
+        <ng-container matColumnDef="EMail">
+            <th mat-header-cell *matHeaderCellDef>Эл. Почта</th>
+            <td mat-cell *matCellDef="let row">{{row.EMail}}</td>
+        </ng-container>
+        <ng-container matColumnDef="ClientName">
+            <th mat-header-cell *matHeaderCellDef>Клиент</th>
+            <td mat-cell *matCellDef="let row">{{row.ClientName}}</td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"
+            [ngClass]="{hovered: row.hovered, highlighted: row.highlighted}"
+            (click)="highlightDrop(); row.highlighted = !row.highlighted"
+            (mouseover)="row.hovered = true"
+            (mouseout)="row.hovered = false">
+        </tr>
+    </table>
 </div>
+<mat-paginator [length]="resultsLength" [pageSize]="40"></mat-paginator>

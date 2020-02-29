@@ -2,157 +2,122 @@
     grid-area: content;
     display: grid;
     grid-template-areas:
+        "header"
         "list";
-    grid-template-rows: 1fr;
+    grid-template-rows: 2em 1fr;
     grid-template-columns: 1fr;
     grid-gap: 0px;
     font-size: 1em;
-    height: 100%;
+    min-height: 0 !important;
+    min-width: 0 !important;
+    max-height: 100% !important;
+    max-width: 100% !important;
     padding: 2.5em;
     box-sizing: border-box;
     position: relative;
 }
-.users-list {
+.table-container {
     grid-area: list;
+    overflow: scroll;
 }
-.users-list__users {
-    padding: 0.25em 0 0.25em 0.25em;
-    overflow-x: hidden;
-    overflow-y: hidden;
-    margin: 0;
+table {
+    min-width: 100%;
 }
-.users-list__users-attr {
-    font-size: 0.75em;
-    overflow-x: hidden;
-    overflow-y: hidden;
-    line-height: normal;
-    white-space: nowrap;
+th.mat-column-position, td.mat-column-position {
+    padding-left: 8px;
 }
-.users-list__users-attr-place {
-    display: inline-block;
-    margin-right: 0.75em;
+.mat-row.hovered {
+    background: #ccc !important;
 }
-.users-list__users-action {
-    cursor: pointer;
+.mat-row.highlighted {
+    background: #888 !important;
 }
-.users-list__users-action:hover {
-    color: #FCAC45;
-}
-.users-list__users-action:hover:active {
-    color: #000;
-}
-.users-list__users:nth-child(odd) {
+.mat-row:nth-child(odd) {
     background-color:#F2F2F2;
 }
-.users-list__users-current {
-    background-color: cornsilk !important;
-}
-.attr-user-name {
-    font-weight: bolder;
-    width: 7em;
-}
-.attr-email {
-    width: 8em;
-}
-.attr-role-code {
-    width: 2.75em;
-}
-.attr-client-name {
-    width: 5em;
-}
-.client-edit {
-    display: grid;
-    grid-template-areas: 
-        "header"
-        "parameters"
-        "message";
-    grid-template-rows: 2em 1fr 2em 2em;
-    grid-template-columns: 1fr;
-    grid-gap: 0px;
+.loading-shade {
     position: absolute;
     top: 0;
     left: 0;
-    height: 100%;
-    width: 100%;
-    box-sizing: border-box;
-    padding: 2.5em;
-    background-color: rgba(255,255,255,1);
+    bottom: 56px;
+    right: 0;
+    background: rgba(0, 0, 0, 0.15);
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
-.form-header {
-    grid-area: header;
-    display: block;
+.mat-cell,
+.mat-header-cell {
+    white-space: nowrap;
+    vertical-align: middle;
+    padding-right: 1.25em;
+    overflow: hidden;
+    text-align: left;
+    text-overflow: ellipsis;
 }
-.form-parameters {
-    grid-area: parameters;
-    display: grid;
-    grid-template-areas:
-        "param-contact-header param-contact-value"
-        "param-email-header param-email-value"
-        "param-phone-header param-phone-value"
-        "param-address-header param-address-value"
-        "param-button-header param-button-save"
-        "param-button-header param-button-cancel"
-        "param-message-header message";
-    grid-template-rows: 1.75em 1.75em 1.75em 1.75em 1.75em 1.75em 4em;
-    grid-template-columns: auto 1fr;
-    font-size: 0.85em;
-    grid-gap: 0.25em;
+.mat-cell:first-of-type {
+    padding-left: 1.25em;
 }
-.form-parameters-name-header {
-    grid-area: param-name-header;
-    align-self: center;
-    justify-self: start;
+.mat-column-Status {
+    min-width: 2.75em;
 }
-.form-parameters-name-value {
-    grid-area: param-name-value;
-    font: inherit;
+.mat-column-Suspend {
+    min-width: 2.75em;
+    cursor: pointer;
 }
-.form-parameters-contact-header {
-    grid-area: param-contact-header;
-    align-self: center;
-    justify-self: start;
+.mat-column-Activate {
+    min-width: 2.75em;
+    cursor: pointer;
 }
-.form-parameters-contact-value {
-    grid-area: param-contact-value;
-    font: inherit;
+.mat-column-Stop {
+    min-width: 2.75em;
+    cursor: pointer;
 }
-.form-parameters-email-header {
-    grid-area: param-email-header;
-    align-self: center;
-    justify-self: start;
+.mat-column-Role {
+    min-width: 5em;
 }
-.form-parameters-email-value {
-    grid-area: param-email-value;
-    font: inherit;
+.mat-column-UserName {
+    max-width: 10em;
 }
-.form-parameters-phone-header {
-    grid-area: param-phone-header;
-    align-self: center;
-    justify-self: start;
+.mat-column-EMail {
+    max-width: 10em;
 }
-.form-parameters-phone-value {
-    grid-area: param-phone-value;
-    font: inherit;
+.mat-column-ClientName {
+    min-width: 20em;
 }
-.form-parameters-address-header {
-    grid-area: param-address-header;
-    align-self: center;
-    justify-self: start;
+.user-active {
+    display: inline-block;
+    width: 2em;
+    height: 2em;
+    border-radius: 50%;
+    background: limegreen;
+    cursor: pointer;
 }
-.form-parameters-address-value {
-    grid-area: param-address-value;
-    font: inherit;
+.user-paused {
+    display: inline-block;
+    width: 2em;
+    height: 2em;
+    border-radius: 50%;
+    background-color: gold;
+    cursor: pointer;
 }
-.form-parameters-button-save {
-    grid-area: param-button-save;
-    font-size: 1em;
-    font: inherit;
+.user-stopped {
+    display: inline-block;
+    width: 2em;
+    height: 2em;
+    border-radius: 50%;
+    background: lightcoral;
+    cursor: pointer;
 }
-.form-parameters-button-cancel {
-    grid-area: param-button-cancel;
-    font-size: 1em;
-    font: inherit;
+.user-status-action {
+    color: orange;
 }
+.user-status-action-not-allowed {
+    color: lightgray;
+}
+
+
 .action-message {
     grid-area: message;
     align-self: center;

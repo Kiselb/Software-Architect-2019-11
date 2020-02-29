@@ -2,96 +2,121 @@
     grid-area: content;
     display: grid;
     grid-template-areas:
+        "header"
         "list";
-    grid-template-rows: 1fr;
+    grid-template-rows: 2em 1fr;
     grid-template-columns: 1fr;
     grid-gap: 0px;
     font-size: 1em;
-    height: 100%;
+    min-height: 0 !important;
+    min-width: 0 !important;
+    max-height: 100% !important;
+    max-width: 100% !important;
     padding: 2.5em;
     box-sizing: border-box;
     position: relative;
 }
-.clients-list {
+.table-container {
     grid-area: list;
+    overflow: scroll;
 }
-.clients-list__clients {
-    padding: 0.25em 0 0.25em 0.25em;
-    overflow-x: hidden;
-    overflow-y: hidden;
-    white-space: nowrap;
+table {
+    min-width: 100%;
 }
-.clients-list__clients-control {
-    display: inline-block;
-    border-radius: 50%;
-    background-color: powderblue;
-    height: 1em;
-    width: 1em;
-    font-size: 0.75em;
-    line-height: 1em;
-    text-align: center;
-    padding: 0.25em;
-    cursor: pointer;
+th.mat-column-position, td.mat-column-position {
+    padding-left: 8px;
 }
-.clients-list__clients-attr {
-    font-size: 0.75em;
-    padding-left: 0.75em;
-    white-space: nowrap;
-    vertical-align: middle;
-    height: 1.1em;
+.mat-row.hovered {
+    background: #ccc !important;
 }
-.clients-list__clients-attr-place {
-    display: inline-block;
-    overflow-x: hidden;
-    overflow-y: hidden;
+.mat-row.highlighted {
+    background: #888 !important;
 }
-.clients-list__clients:nth-child(odd) {
+.mat-row:nth-child(odd) {
     background-color:#F2F2F2;
 }
-.clients-list__clients-current {
-    background-color: cornsilk !important;
+.loading-shade {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 56px;
+    right: 0;
+    background: rgba(0, 0, 0, 0.15);
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
-.clients-list__clients-status {
-    height: 1em;
-    width: 1em;
-    font-size: 0.75em;
-    line-height: 1em;
-    text-align: center;
-    padding: 0.25em;
-    border-radius: 50%;
+.mat-cell,
+.mat-header-cell {
+    white-space: nowrap;
+    vertical-align: middle;
+    padding-right: 1.25em;
+    overflow: hidden;
+    text-align: left;
+    text-overflow: ellipsis;
 }
-.clients-list__clients-status-place {
+.mat-cell:first-of-type {
+    padding-left: 1.25em;
+}
+/*
+    Column Widths
+*/
+.mat-column-Open {
+    min-width: 2.75em;
+}
+.mat-column-Status {
+    min-width: 2.75em;
+}
+.mat-column-ClientName {
+    min-width: 10em;
+}
+.mat-column-ContactName {
+    min-width: 13em;
+}
+.mat-column-EMail {
+    max-width: 5em;
+}
+.mat-column-Phone {
+    max-width: 10em;
+}
+.mat-column-Address {
+    min-width: 50em;
+}
+.editAction {
     display: inline-block;
-    margin-left: 0.5em;
+    width: 2em;
+    height: 2em;
+    border-radius: 50%;
+    background: khaki;
+    cursor: pointer;
 }
-.status-1 {
-    background-color: lawngreen;
+.clientStatus-active {
+    display: inline-block;
+    width: 2em;
+    height: 2em;
+    border-radius: 50%;
+    background: limegreen;
+    cursor: pointer;
 }
-.status-2 {
+.clientStatus-paused {
+    display: inline-block;
+    width: 2em;
+    height: 2em;
+    border-radius: 50%;
     background-color: gold;
+    cursor: pointer;
 }
-.status-3 {
-    background-color: red;
-}
-.attr-status-name {
-    width: 4em;
-}
-.attr-client-name {
-    width: 10em;
-}
-.attr-contact-name {
-    width: 8em;
-}
-.attr-email {
-    width: 8em;
-}
-.attr-phone {
-    width: 8em;
-}
-.attr-address {
-    width: 8em;
+.clientStatus-stopped {
+    display: inline-block;
+    width: 2em;
+    height: 2em;
+    border-radius: 50%;
+    background: lightcoral;
+    cursor: pointer;
 }
 .client-edit {
+    grid-area: content;
     display: grid;
     grid-template-areas: 
         "header"
@@ -101,17 +126,16 @@
     grid-template-columns: 1fr;
     grid-gap: 0px;
     position: absolute;
-    top: 0;
-    left: 0;
     height: 100%;
     width: 100%;
     box-sizing: border-box;
     padding: 2.5em;
-    background-color: rgba(255,255,255,1);
+    background-color: rgb(250, 250, 250);
 }
 .form-header {
     grid-area: header;
     display: block;
+    background-color: rgb(250, 250, 250);
 }
 .form-parameters {
     grid-area: parameters;
@@ -190,6 +214,7 @@
     justify-self: center;
 }
 .process-indicator {
+    grid-area: parameters;    
     display: grid;
     grid-template-areas: 
         "empty1 empty2 empty3"
@@ -198,12 +223,11 @@
     grid-template-rows: 1fr 1fr 1fr;
     grid-template-columns: 2fr 1fr 2fr;
     grid-gap: 0px;
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 100%;
-    width: 100%;
-    background-color: rgba(255,255,255,0.75);
+    min-height: 0 !important;
+    min-width: 0 !important;
+    max-height: 100% !important;
+    max-width: 100% !important;
+    background-color: rgb(250, 250, 250, 0.75);
 }
 
 /*

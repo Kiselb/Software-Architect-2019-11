@@ -1,12 +1,21 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { Router, NavigationEnd } from '@angular/router';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { MatDialog } from '@angular/material/dialog';
 
 import { UsersService } from './users.service';
 import { AuthorizationService } from './../auth/authorization.service';
 import { UsersSetStatusService } from './users-set-status.service';
 import { IUserInfo } from './../../data';
+
+export interface ISingleHighlighted {
+  highlighted?: boolean;
+}
+
+export interface ITableUserInfo extends IUserInfo, ISingleHighlighted {}
 
 @Component({
   selector: 'app-users',
@@ -15,9 +24,21 @@ import { IUserInfo } from './../../data';
 })
 export class UsersComponent implements OnInit {
 
-  users: IUserInfo[];
-  selectedUser: IUserInfo;
+  users: ITableUserInfo[];
+  selectedUser: ITableUserInfo;
   navigationSubscription;
+
+  @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
+  @ViewChild(MatSort, {static: false}) sort: MatSort;
+
+  highlight(element: any) {
+    element.highlighted = !element.highlighted;
+  }
+  highlightDrop() {
+    this.users.map(element => { if (element.highlighted) {element.highlighted  = false }; return element; })
+  }
+  
+  displayedColumns: string[] = ['Status', 'Suspend', 'Activate', 'Stop', 'Role', 'UserName', 'EMail', 'ClientName'];
 
   constructor(
     private router: Router,
@@ -30,7 +51,7 @@ export class UsersComponent implements OnInit {
     return this.authorizationService.getPermissions(permissionKey);
   }
 
-  selectUser(user: IUserInfo) {
+  selectUser(user: ITableUserInfo) {
     this.selectedUser = user;
   }
   
