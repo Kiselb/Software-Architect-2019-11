@@ -86,4 +86,10 @@ export class UsersComponent implements OnInit {
       }
     );
   }
+
+  ngOnDestroy(){
+    if (this.navigationSubscription) {
+      this.navigationSubscription.unsubscribe();
+    }
+  }
 }
