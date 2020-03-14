@@ -29,6 +29,7 @@ export class ClientsComponent implements OnInit {
   actionMessage: string = "";
   indicatorHidden: boolean = true;
   navigationSubscription;
+  resultsLength: number = 0;
 
   fgClientsParameters = new FormGroup({
     ctrlContactName: new FormControl(null, [Validators.required, Validators.min(1), Validators.max(255)]),
@@ -64,6 +65,7 @@ displayedColumns: string[] = ['Status', 'ClientName', 'ContactName', 'EMail', 'P
       data => {
         console.dir(data);
         this.clients = data;
+        this.resultsLength = this.clients.length;
         if (presetUID) {
           this.selectedClient = this.clients.find(client => client.ClientID === presetUID)
           this.selectedClient.highlighted = true;

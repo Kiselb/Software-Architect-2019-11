@@ -6,7 +6,7 @@
             <input type="file" formControlName="ctrlFileName" (change)="onChangeFile($event)" name="file" #selectfilesinput required>
         </form>
     </div>
-    <div class="command command-place command-faded">{{(formDataSendFile)?(formDataSendFile.get('file').name):("")}}</div>
+    <div class="command command-place command-faded">{{(formDataSendFile)?(formDataSendFile.get('file')["name"]):("")}}</div>
 </div>
 <form class="form-parameters" [formGroup]="fgParameters">
     <label class="form-parameters-client-header">Клиент:</label><select formControlName="ctrlClientId" class="form-parameters-client-value">

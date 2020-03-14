@@ -54,6 +54,9 @@ export class RequestsNewComponent implements AfterViewInit {
       error => { console.dir(error); }
     );
   }
+  openEditDialog(action: string, row: ITableServiceRequestHeader) {
+    
+  }
   ngAfterViewInit() {
     this.loadData(null);
   }

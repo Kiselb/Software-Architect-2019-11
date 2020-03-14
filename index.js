@@ -5,6 +5,11 @@ const cors = require('cors'); // npm install --save cors
 const bodyParser = require('body-parser'); // npm install --save body-parser
 const jwt = require('jsonwebtoken'); // npm install --save jsonwebtoken
 const fileUpload = require('express-fileupload'); // npm install --save express-fileupload
+const webPush = require('web-push'); // npm install --save web-push
+
+// https://app.sendgrid.com/email_activity?filters=%22%22&isAndOperator=true
+// Kiselb MVK$73582
+const sgMail = require('@sendgrid/mail'); // npm install --save @sendgrid/mail
 
 const config = require('./config.json');
 
@@ -33,6 +38,15 @@ MIGeMA0GCSqGSIb3DQEBAQUAA4GMADCBiAKBgHA9IScOQDRSd/pGYTZsq5juAZ+f
 IABGNGE/RqQ3CZiwoJVABOObpS8cKIcmyyd3iYiS8bIUlQJ+8lsn4cblOS+2rik0
 lQvt/w+WTXCB9mmZAgMBAAE=
 -----END PUBLIC KEY-----`
+
+const publicVapidKey = "BHZR7gUHJwp6FcZG4gPmuB8zPk6YZmdGN74MBVLfCZCLDwzQoSPdb0gTbpJJ_KzzZ3Fq-CZU-1wOKMzlIHXUWHc";
+const privateVapidKey = "ObceMkqK2e1_irMbTsAn8bbsEtgGh2LBhSfgiTPQQKM";
+
+const SENDGRID_API_KEY = "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";
+var emailAddressCounter = 1;
+webPush.setVapidDetails('mailto:wfw311@hotmail.com', publicVapidKey, privateVapidKey);
+
+sgMail.setApiKey(SENDGRID_API_KEY);
 
 const mssql_config = {
     server: "10.106.101.113", //server: "172.17.0.2",
@@ -175,7 +189,72 @@ app.put('/users/:userId/status', function(req, res) {
   }
   store.userSetStatus(params)
   .then(result => { res.status(200).send(JSON.stringify({ "result": 0, "message": 'Status updated', "userId": params.userId }))})
-  .catch(error => { res.status(500).send(JSON.stringify({ "result": -1, "message": error.message, "userId": ''}))});
+  .catch(error => { res.status(500).send(JSON.stringify({ "result": -1, "message": error.message, "userId": params.userId}))});
+});
+app.post('/subscribe', function(req, res) {
+  const params = {
+    pool: mssqlPool,
+    userId: authRequest(req),
+    subscription: JSON.stringify(req.body)
+  };
+
+  console.log(params.subscription);
+
+  const payload = JSON.stringify({
+    notification: {
+      title: 'Task #2. Notifications',
+      body: 'This notification send through Angular',
+      icon: 'https://www.shareicon.net/data/256x256/2015/10/02/110808_blog_512x512.png',
+      vibrate: [100, 50, 100],
+      data: {
+        url: 'https://otus.ru'
+      }
+    }
+  });
+  //res.status(201).json({});
+
+  webPush.sendNotification(JSON.parse(params.subscription), payload)
+  .then(result => store.subscribeUser(params))
+  .then(result => res.status(201).json({ "result": 0, "message": "", "userId": params.userId}))
+  .catch(error => { res.status(500).send(JSON.stringify({ "result": -1, "message": error.message, "userId": params.userId}))});
+});
+app.post('/notifypush', function(req, res) {
+  const params = {
+    pool: mssqlPool,
+    userId: authRequest(req)
+  };
+
+  const payload = JSON.stringify({
+    notification: {
+      title: 'Task #2. Notifications',
+      body: 'This notification send through Angular',
+      icon: 'https://www.shareicon.net/data/256x256/2015/10/02/110808_blog_512x512.png',
+      vibrate: [100, 50, 100],
+      data: {
+        url: 'https://otus.ru'
+      }
+    }
+  });
+
+  store.getSubscription(params)
+  .then(subscription => webPush.sendNotification(JSON.parse(subscription), payload))
+  .then(result => res.status(201).json({ "result": 0, "message": "", "userId": params.userId}))
+  .catch(error => { res.status(500).send(JSON.stringify({ "result": -1, "message": error.message, "userId": params.userId}))});
+});
+app.post('/notifyemail', function(req, res) {
+  console.log("EMail request accepted");
+  const msg = {
+    to: 'mvkiselev@legion.ru', //'wfw311@hotmail.com',
+    from: 'wfw311@hotmail.com',
+    //from: 'test' + emailAddressCounter.toString() + '@test.com',
+    subject: 'Software Architect Course. Task #2',
+    text: 'This message issued by notification microservice',
+    html: '<strong>This message issued by notification microservice<strong>',
+  };
+  sgMail.send(msg);
+  emailAddressCounter = emailAddressCounter + 1;
+  console.log("EMail sent");
+  res.status(201).json({});
 });
 //
 // Clients

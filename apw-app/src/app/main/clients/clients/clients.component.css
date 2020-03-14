@@ -73,9 +73,11 @@ th.mat-column-position, td.mat-column-position {
 }
 .mat-column-ContactName {
     min-width: 13em;
+    border-right: 1px solid #e0e0e0;
 }
 .mat-column-EMail {
     max-width: 5em;
+    padding-left: 1em;
 }
 .mat-column-Phone {
     max-width: 10em;

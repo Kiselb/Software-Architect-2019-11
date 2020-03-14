@@ -36,6 +36,8 @@ import { SubdivisionsRegisterComponent } from './main/subdivisions/subdivisions-
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ServiceRequestEditDialogComponent } from './main/requests/service-request-edit-dialog/service-request-edit-dialog.component';
 import { ServiceRequestDetailsComponent } from './main/requests/service-request-details/service-request-details.component';
+import { ServiceWorkerModule } from '@angular/service-worker';
+import { environment } from '../environments/environment';
 
 @NgModule({
   declarations: [
@@ -73,6 +75,7 @@ import { ServiceRequestDetailsComponent } from './main/requests/service-request-
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
+    ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
   ],
   entryComponents: [
     ServiceRequestEditDialogComponent

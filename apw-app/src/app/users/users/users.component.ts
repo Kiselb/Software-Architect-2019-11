@@ -27,6 +27,7 @@ export class UsersComponent implements OnInit {
   users: ITableUserInfo[];
   selectedUser: ITableUserInfo;
   navigationSubscription;
+  resultsLength: number = 0;
 
   @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
   @ViewChild(MatSort, {static: false}) sort: MatSort;
@@ -59,6 +60,7 @@ export class UsersComponent implements OnInit {
     this.usersService.getUsers(criteria).subscribe(
       response => {
         this.users = response.body;
+        this.resultsLength = this.users.length;
         console.dir(response.body);
       },
       error => {

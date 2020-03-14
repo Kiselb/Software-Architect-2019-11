@@ -22,7 +22,7 @@
             <td mat-cell *matCellDef="let row">{{row.ClientName}}</td>
         </ng-container>
         <ng-container matColumnDef="ContactName" [sticky]="true">
-            <th mat-header-cell *matHeaderCellDef>Контакт</th>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>Контакт</th>
             <td mat-cell *matCellDef="let row">{{row.ContactName}}</td>
         </ng-container>
         <ng-container matColumnDef="EMail">
