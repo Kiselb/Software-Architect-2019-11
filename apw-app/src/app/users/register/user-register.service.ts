@@ -4,7 +4,8 @@ import { map } from 'rxjs/operators';
 import { HttpClient, HttpHeaders, HttpResponse } from  '@angular/common/http';
 import { IUserParams, IUserResult } from '../../data';
 
-const SERVER_URL: string = "http://localhost:3000/users";
+//const SERVER_URL: string = "http://localhost:3000/users";
+const SERVER_URL: string = "https://apw.legion.ru:8443/users";
 
 @Injectable({
   providedIn: 'root'

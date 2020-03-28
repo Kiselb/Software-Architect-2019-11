@@ -6,7 +6,8 @@ import { IServiceRequestDetailsRow } from '../../../data';
 
 // https://blog.angular-university.io/rxjs-error-handling/
 
-const SERVER_URL: string = "http://localhost:3000"; //"http://apw.legion.ru:8000"; //"http://localhost:3000";
+//const SERVER_URL: string = "http://localhost:3000";
+const SERVER_URL: string = "https://apw.legion.ru:8443";
 
 @Injectable({
   providedIn: 'root'

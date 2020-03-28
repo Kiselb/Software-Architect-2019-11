@@ -5,7 +5,8 @@ import { tap, shareReplay, catchError } from 'rxjs/operators';
 
 import { AuthService } from '../auth/auth.service';
 
-const SERVER_URL: string = "http://localhost:3000/authorization"; //"http://apw.legion.ru:8000/authorization"; //"http://localhost:3000/authorization";
+//const SERVER_URL: string = "http://localhost:3000/authorization";
+const SERVER_URL: string = "https://apw.legion.ru:8443/authorization";
 
 interface IPermission {
   PermissionID: string,

@@ -48,45 +48,6 @@ exports.userSetStatus = function(params) {
         }
     });
 };
-exports.subscribeUser = function(params) {
-    return new Promise(async (resolve, reject) => {
-        try {
-            const request = await new mssql.Request(params.pool);
-            request.input('UserID', mssql.UniqueIdentifier, params.userId);
-            request.input('Subscription', mssql.NVarChar, params.subscription);
-
-            const result = await request.execute('dbo.UsersSubscriptionRegister');
-            resolve(result);
-        }
-        catch(error) {
-            reject(error);
-        }
-    });
-};
-exports.getSubscription = function(params) {
-    return new Promise(async (resolve, reject) => {
-        try {
-            const request = await new mssql.Request(params.pool);
-            request.input('UserID', mssql.UniqueIdentifier, params.userId);
-
-            const result = await request.execute('dbo.UsersSubscription');
-
-            if (result.recordsets.length === 0) throw new Error("User isn't subscribing");
-            if (result.recordsets[0].length === 0) throw new Error("User isn't subscribing");
-
-            const subscription = result.recordsets[0][0].Subscription;
-
-            if (!!subscription) {
-                resolve(subscription);
-            } else {
-                throw new Error("User isn't subscribing");
-            }
-        }
-        catch(error) {
-            reject(error);
-        }
-    });
-};
 exports.clientAddNew = function(params) {
     return new Promise(async (resolve, reject) => {
         try {

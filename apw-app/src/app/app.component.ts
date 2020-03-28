@@ -51,6 +51,6 @@ export class AppComponent {
   }
 
   notifyEMail() {
-    this.newsLetterService.notifyEMail("{}").subscribe(result => console.log(result));
+    this.newsLetterService.notifyEMail({mailTo: 'wfw311@hotmail.com', subject: 'Test', message: 'Testing notifying'}).subscribe(result => console.log(result));
   }
 }

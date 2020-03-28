@@ -1,4 +1,5 @@
 const express = require('express');
+const axios = require('axios'); // npm install axios
 const path = require('path');
 const mssql = require('mssql');
 const cors = require('cors'); // npm install --save cors
@@ -9,7 +10,7 @@ const webPush = require('web-push'); // npm install --save web-push
 
 // https://app.sendgrid.com/email_activity?filters=%22%22&isAndOperator=true
 // Kiselb MVK$73582
-const sgMail = require('@sendgrid/mail'); // npm install --save @sendgrid/mail
+// const sgMail = require('@sendgrid/mail'); // npm install --save @sendgrid/mail
 
 const config = require('./config.json');
 
@@ -46,10 +47,11 @@ const SENDGRID_API_KEY = "SG.aJtofWcAQVeq-CmY9NKPog.n7n2oknk05KcBOzQ_09jDQ9tB_C2
 var emailAddressCounter = 1;
 webPush.setVapidDetails('mailto:wfw311@hotmail.com', publicVapidKey, privateVapidKey);
 
-sgMail.setApiKey(SENDGRID_API_KEY);
+//sgMail.setApiKey(SENDGRID_API_KEY);
 
 const mssql_config = {
-    server: "10.106.101.113", //server: "172.17.0.2",
+    //server: "10.106.101.113",
+    server: "172.17.0.2",
     authentication: { options: { userName: "webuser", password: "mvkMVK$@#1245" }},
     options: { database: "Warehouse", useUTC: false } 
 };
@@ -192,38 +194,26 @@ app.put('/users/:userId/status', function(req, res) {
   .catch(error => { res.status(500).send(JSON.stringify({ "result": -1, "message": error.message, "userId": params.userId}))});
 });
 app.post('/subscribe', function(req, res) {
-  const params = {
-    pool: mssqlPool,
-    userId: authRequest(req),
-    subscription: JSON.stringify(req.body)
-  };
+  const userId = authRequest(req);
+  const subscription = req.body;
 
-  console.log(params.subscription);
-
-  const payload = JSON.stringify({
-    notification: {
-      title: 'Task #2. Notifications',
-      body: 'This notification send through Angular',
-      icon: 'https://www.shareicon.net/data/256x256/2015/10/02/110808_blog_512x512.png',
-      vibrate: [100, 50, 100],
-      data: {
-        url: 'https://otus.ru'
-      }
-    }
+  console.log('Push subscribing: Call push microservice');
+  console.log(JSON.stringify(subscription));
+  //res.status(201).json({ "result": 0, "message": "", "userId": userId});
+  
+  //axios.post('http://localhost:3100/subscribe', { subscription: subscription, userId: userId})
+  axios.post('http://172.17.0.4:3100/subscribe', { subscription: req.body, userId: userId})
+  .then(response => {
+    console.log(`Status Code: ${response.status}`);
+    res.status(201).json({ "result": 0, "message": JSON.stringify(subscription), "userId": userId});
+  })
+  .catch(error => {
+    console.log(error);
+    res.status(500).json({ "result": -1, "message": error, "userId": userId});
   });
-  //res.status(201).json({});
-
-  webPush.sendNotification(JSON.parse(params.subscription), payload)
-  .then(result => store.subscribeUser(params))
-  .then(result => res.status(201).json({ "result": 0, "message": "", "userId": params.userId}))
-  .catch(error => { res.status(500).send(JSON.stringify({ "result": -1, "message": error.message, "userId": params.userId}))});
 });
 app.post('/notifypush', function(req, res) {
-  const params = {
-    pool: mssqlPool,
-    userId: authRequest(req)
-  };
-
+  const userId = authRequest(req);  
   const payload = JSON.stringify({
     notification: {
       title: 'Task #2. Notifications',
@@ -236,25 +226,37 @@ app.post('/notifypush', function(req, res) {
     }
   });
 
-  store.getSubscription(params)
-  .then(subscription => webPush.sendNotification(JSON.parse(subscription), payload))
-  .then(result => res.status(201).json({ "result": 0, "message": "", "userId": params.userId}))
-  .catch(error => { res.status(500).send(JSON.stringify({ "result": -1, "message": error.message, "userId": params.userId}))});
+  res.status(201).json({});
+  console.log('Call notifypush microservice');
+
+  //axios.post('http://localhost:3100/notifypush', { payload: payload, userId: userId})
+  axios.post('http://172.17.0.4:3100/notifypush', { payload: payload, userId: userId})
+
+  .then(response => {
+    console.log(`Status Code: ${response.status}`);
+    //res.status(201).json({ "response": response.body });
+  })
+  .catch(error => {
+    console.log(error);
+    //res.status(500).json({});
+  });
 });
 app.post('/notifyemail', function(req, res) {
-  console.log("EMail request accepted");
-  const msg = {
-    to: 'mvkiselev@legion.ru', //'wfw311@hotmail.com',
-    from: 'wfw311@hotmail.com',
-    //from: 'test' + emailAddressCounter.toString() + '@test.com',
-    subject: 'Software Architect Course. Task #2',
-    text: 'This message issued by notification microservice',
-    html: '<strong>This message issued by notification microservice<strong>',
-  };
-  sgMail.send(msg);
-  emailAddressCounter = emailAddressCounter + 1;
   console.log("EMail sent");
   res.status(201).json({});
+  //axios.post('http://localhost:3200/notifyemail', {
+  axios.post('http://172.17.0.5:3200/notifyemail', {
+    mailTo: req.body.mailTo,
+    subject: req.body.subject,
+    message: req.body.message,
+    userId: authRequest(req)
+  })
+  .then(response => {
+    console.log(`Status Code: ${response.status}`);
+  })
+  .catch(error => {
+    console.log(error);
+  });
 });
 //
 // Clients

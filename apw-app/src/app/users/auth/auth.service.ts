@@ -4,7 +4,8 @@ import { Observable, of } from 'rxjs'
 import { tap, shareReplay, catchError } from 'rxjs/operators';
 import * as moment from "moment";
 
-const AUTH_URL = "http://localhost:3000/login"; //"http://apw.legion.ru:8000/login"; //"http://localhost:3000/login";
+//const AUTH_URL = "http://localhost:3000/login";
+const AUTH_URL = "https://apw.legion.ru:8443/login";
 
 interface ILogin {
   name: string,
