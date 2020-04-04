@@ -214,7 +214,7 @@ app.post('/subscribe', function(req, res) {
 });
 app.post('/notifypush', function(req, res) {
   const userId = authRequest(req);  
-  const payload = JSON.stringify({
+  const payload = {
     notification: {
       title: 'Task #2. Notifications',
       body: 'This notification send through Angular',
@@ -223,14 +223,15 @@ app.post('/notifypush', function(req, res) {
       data: {
         url: 'https://otus.ru'
       }
-    }
-  });
+    },
+    userId: userId
+  };
 
   res.status(201).json({});
   console.log('Call notifypush microservice');
 
-  //axios.post('http://localhost:3100/notifypush', { payload: payload, userId: userId})
-  axios.post('http://172.17.0.4:3100/notifypush', { payload: payload, userId: userId})
+  //axios.post('http://localhost:3100/notifypush', payload)
+  axios.post('http://172.17.0.4:3100/notifypush', payload)
 
   .then(response => {
     console.log(`Status Code: ${response.status}`);
