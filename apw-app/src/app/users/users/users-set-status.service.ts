@@ -4,9 +4,7 @@ import { map } from 'rxjs/operators';
 import { HttpClient, HttpHeaders, HttpResponse } from  '@angular/common/http';
 
 import { IUserResult } from '../../data';
-
-//const SERVER_URL: string = "http://localhost:3000";
-const SERVER_URL: string = "https://apw.legion.ru:8443";
+import {environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -16,6 +14,6 @@ export class UsersSetStatusService {
   constructor(private httpClient: HttpClient) { }
 
   public getClients(userId: string, status: number): Observable<IUserResult[]> {
-    return this.httpClient.put<IUserResult[]>(`${SERVER_URL}/users/${userId}/status/`, {status: status});
+    return this.httpClient.put<IUserResult[]>(`${environment.backendURL}/users/${userId}/status/`, {status: status});
   }
 }

@@ -8,8 +8,9 @@ import { catchError, map, startWith, switchMap } from 'rxjs/operators';
 import { RequestsService } from './requests.service';
 import { IServiceRequestHeader } from '../../../data';
 import { MatIconModule } from '@angular/material/icon';
-import { ServiceRequestEditDialogComponent } from '../service-request-edit-dialog/service-request-edit-dialog.component'
-import { ServiceRequestHeaderUpdateService } from '../service-request-edit-dialog/service-request-header-update.service'
+import { ServiceRequestEditDialogComponent } from '../service-request-edit-dialog/service-request-edit-dialog.component';
+import { ServiceRequestHeaderUpdateService } from '../service-request-edit-dialog/service-request-header-update.service';
+import { ServiceRequestEditStatusComponent } from '../service-request-edit-status/service-request-edit-status.component';
 
 export interface ISingleHighlighted {
   highlighted?: boolean;
@@ -43,15 +44,15 @@ export class RequestsComponent implements AfterViewInit {
     private router: Router,
     private requestsService: RequestsService,
     private serviceRequestHeaderUpdateService: ServiceRequestHeaderUpdateService,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    public dialogStatus: MatDialog
   ) { }
 
   loadData(srid: string) {
     this.requestsService.getRequests("","DueDate", "DESC", 1, 20, 2).subscribe(
       data => {
-        this.data = data["SR-HEADERS"];
+        this.data = data;
         this.resultsLength = this.data.length;
-        console.dir(this.data);
         if (srid) {
           this.data.forEach(element =>
             { if (element.ServiceRequestID == srid) {
@@ -70,10 +71,23 @@ export class RequestsComponent implements AfterViewInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      console.dir(result);
       if (result.event == 'Save') {
-        this.serviceRequestHeaderUpdateService.getRequests(result.data).subscribe(
-          data => { console.dir(data); this.loadData(data.serviceRequestID) },
+        this.serviceRequestHeaderUpdateService.setHeader(result.data).subscribe(
+          data => this.loadData(data.serviceRequestID),
+          error => console.dir(error)
+        );
+      }
+    });
+  }
+  openStatusDialog(row: ITableServiceRequestHeader) {
+    const dialogRef = this.dialogStatus.open(ServiceRequestEditStatusComponent, {
+      width: '500px',
+      data: row
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result.event == 'Save') {
+        this.serviceRequestHeaderUpdateService.setStatus(result.data).subscribe(
+          data => this.loadData(data.serviceRequestID),
           error => console.dir(error)
         );
       }

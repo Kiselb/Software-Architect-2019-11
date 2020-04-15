@@ -32,8 +32,6 @@ export class ServiceRequestEditDialogComponent implements OnInit {
     );
   }
   doSave(){
-    console.log("Save");
-    console.dir(this.local_data);
     this.dialogRef.close({event: 'Save', data: this.local_data});
   }
   closeDialog(){

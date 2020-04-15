@@ -38,6 +38,8 @@ import { ServiceRequestEditDialogComponent } from './main/requests/service-reque
 import { ServiceRequestDetailsComponent } from './main/requests/service-request-details/service-request-details.component';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
+import { ServiceRequestEditStatusComponent } from './main/requests/service-request-edit-status/service-request-edit-status.component';
+import { MatRadioModule, MAT_RADIO_DEFAULT_OPTIONS } from '@angular/material/radio';
 
 @NgModule({
   declarations: [
@@ -60,6 +62,7 @@ import { environment } from '../environments/environment';
     SubdivisionsRegisterComponent,
     ServiceRequestEditDialogComponent,
     ServiceRequestDetailsComponent,
+    ServiceRequestEditStatusComponent,
   ],
   imports: [
     BrowserModule,
@@ -75,12 +78,16 @@ import { environment } from '../environments/environment';
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
+    MatRadioModule,
     ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
   ],
   entryComponents: [
-    ServiceRequestEditDialogComponent
+    ServiceRequestEditDialogComponent,
+    ServiceRequestEditStatusComponent
   ],
-  providers: [HttpClientModule, HttpClient, {provide: HTTP_INTERCEPTORS, useClass: JWTInterceptorService, multi: true}],
+  providers: [HttpClientModule, HttpClient, {provide: HTTP_INTERCEPTORS, useClass: JWTInterceptorService, multi: true},
+    { provide: MAT_RADIO_DEFAULT_OPTIONS, useValue: { color: 'accent' }}
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

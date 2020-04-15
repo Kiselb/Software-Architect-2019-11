@@ -1,4 +1,5 @@
 import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatDialog } from '@angular/material/dialog';
@@ -31,6 +32,7 @@ export class RequestsNewComponent implements AfterViewInit {
   displayedColumns: string[] = ['Open', 'DueDate', 'ServiceRequestTypeCode', 'StatusCode', 'ClientName', 'Remarks'];
 
   constructor(
+    private router: Router,
     private requestsService: RequestsService,
     public dialog: MatDialog
   ) { }
@@ -39,9 +41,8 @@ export class RequestsNewComponent implements AfterViewInit {
     this.requestsService.getRequests("","DueDate", "DESC", 1, 20, 1).subscribe(
       data => {
         if (data) {
-          this.data = data["SR-HEADERS"];
+          this.data = data;
           this.resultsLength = this.data.length;
-          console.dir(this.data);
           if (srid) {
             this.data.forEach(element =>
               { if (element.ServiceRequestID == srid) {
@@ -54,8 +55,11 @@ export class RequestsNewComponent implements AfterViewInit {
       error => { console.dir(error); }
     );
   }
+  openServiceRequestDetails(row: ITableServiceRequestHeader) {
+    this.router.navigate(['/requests/' + row.ServiceRequestID]);
+  }
   openEditDialog(action: string, row: ITableServiceRequestHeader) {
-    
+    this.openServiceRequestDetails(row);
   }
   ngAfterViewInit() {
     this.loadData(null);

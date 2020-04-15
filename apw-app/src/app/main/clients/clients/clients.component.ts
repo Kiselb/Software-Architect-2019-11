@@ -104,7 +104,7 @@ displayedColumns: string[] = ['Status', 'ClientName', 'ContactName', 'EMail', 'P
     };
     this.clientUpdateService.update(data).subscribe(
       response => {
-        console.dir("Show indicator");
+        this.actionMessage = "";
         setTimeout(() => { this.indicatorHidden = true; this.editMode = false; this.viewClients('*', data.ClientID); }, 4000);
       },
       error => {
@@ -121,6 +121,7 @@ displayedColumns: string[] = ['Status', 'ClientName', 'ContactName', 'EMail', 'P
   }
 
   ngOnInit() {
+    this.actionMessage = "";
     this.viewClients("*", null);
     this.router.onSameUrlNavigation = 'reload';
     this.navigationSubscription = this.router.events.subscribe(

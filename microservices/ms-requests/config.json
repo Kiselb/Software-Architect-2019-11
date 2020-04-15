@@ -1,0 +1,33 @@
+{
+    "development": {
+        "config_id": "development",
+        "app_name": "projectwork",
+        "app_desc": "projectwork",
+        "node_port": 80,
+        "mssql_config": {
+            "server": "nacer",
+            "authentication": {
+                "options": {
+                    "userName": "webuser",
+                    "password": "wup@ssw0rd"
+                }
+            },
+            "options": {
+                "database": "aspb",
+                "useUTC": false
+            } 
+        },
+        "dstpath": "I:\\USR\\MDB\\Misc\\TEST\\UPLOAD\\"
+    },
+    "testing": {
+        "config_id": "testing"
+    },
+    "staging": {
+        "config_id": "staging",
+        "node_port": 8080
+    },
+    "production": {
+        "config_id": "production",
+        "node_port": 8080
+    }
+}

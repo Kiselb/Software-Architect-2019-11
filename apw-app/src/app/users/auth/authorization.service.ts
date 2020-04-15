@@ -4,9 +4,7 @@ import { Observable, of } from 'rxjs'
 import { tap, shareReplay, catchError } from 'rxjs/operators';
 
 import { AuthService } from '../auth/auth.service';
-
-//const SERVER_URL: string = "http://localhost:3000/authorization";
-const SERVER_URL: string = "https://apw.legion.ru:8443/authorization";
+import {environment } from '../../../environments/environment';
 
 interface IPermission {
   PermissionID: string,
@@ -25,7 +23,7 @@ export class AuthorizationService {
 
   authorize() {
     return this.httpClient
-      .post<IPermission[]>(SERVER_URL, null)
+      .post<IPermission[]>(`${environment.backendURL}/authorization`, null)
       .pipe(tap<IPermission[]>(response => this.setPermissions(response)))
       .pipe(catchError(error => of(error)));
   }

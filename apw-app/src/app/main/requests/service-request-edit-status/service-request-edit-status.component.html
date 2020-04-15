@@ -1,0 +1,10 @@
+<p>Изменение состояния заявки на обслуживание</p>
+<div mat-dialog-content>
+    <mat-radio-group class="radio-group" [(ngModel)]="local_data.Status.StatusID">
+        <mat-radio-button class="radio-button" *ngFor="let state of states" [value]="state.id">{{state.name}}</mat-radio-button>
+    </mat-radio-group>
+</div>
+<div mat-dialog-actions>
+    <button mat-button (click)="doSave()">Сохранить</button>
+    <button mat-button (click)="closeDialog()" mat-flat-button color="warn">Отмена</button>
+</div>

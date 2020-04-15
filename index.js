@@ -1,12 +1,13 @@
 const express = require('express');
-const axios = require('axios'); // npm install axios
+const axios = require('axios');                   // npm install axios
 const path = require('path');
 const mssql = require('mssql');
-const cors = require('cors'); // npm install --save cors
-const bodyParser = require('body-parser'); // npm install --save body-parser
-const jwt = require('jsonwebtoken'); // npm install --save jsonwebtoken
+const cors = require('cors');                     // npm install --save cors
+const bodyParser = require('body-parser');        // npm install --save body-parser
+const jwt = require('jsonwebtoken');              // npm install --save jsonwebtoken
 const fileUpload = require('express-fileupload'); // npm install --save express-fileupload
-const webPush = require('web-push'); // npm install --save web-push
+const webPush = require('web-push');              // npm install --save web-push
+const FormData = require('form-data');            //npm install --save form-data
 
 // https://app.sendgrid.com/email_activity?filters=%22%22&isAndOperator=true
 // Kiselb MVK$73582
@@ -50,8 +51,8 @@ webPush.setVapidDetails('mailto:wfw311@hotmail.com', publicVapidKey, privateVapi
 //sgMail.setApiKey(SENDGRID_API_KEY);
 
 const mssql_config = {
-    //server: "10.106.101.113",
-    server: "172.17.0.2",
+    server: "10.106.101.113",
+    //server: "172.17.0.2",
     authentication: { options: { userName: "webuser", password: "mvkMVK$@#1245" }},
     options: { database: "Warehouse", useUTC: false } 
 };
@@ -201,8 +202,8 @@ app.post('/subscribe', function(req, res) {
   console.log(JSON.stringify(subscription));
   //res.status(201).json({ "result": 0, "message": "", "userId": userId});
   
-  //axios.post('http://localhost:3100/subscribe', { subscription: subscription, userId: userId})
-  axios.post('http://172.17.0.4:3100/subscribe', { subscription: req.body, userId: userId})
+  axios.post('http://localhost:3100/subscribe', { subscription: subscription, userId: userId})
+  //axios.post('http://172.17.0.4:3100/subscribe', { subscription: req.body, userId: userId})
   .then(response => {
     console.log(`Status Code: ${response.status}`);
     res.status(201).json({ "result": 0, "message": JSON.stringify(subscription), "userId": userId});
@@ -230,8 +231,8 @@ app.post('/notifypush', function(req, res) {
   res.status(201).json({});
   console.log('Call notifypush microservice');
 
-  //axios.post('http://localhost:3100/notifypush', payload)
-  axios.post('http://172.17.0.4:3100/notifypush', payload)
+  axios.post('http://localhost:3100/notifypush', payload)
+  //axios.post('http://172.17.0.4:3100/notifypush', payload)
 
   .then(response => {
     console.log(`Status Code: ${response.status}`);
@@ -245,8 +246,8 @@ app.post('/notifypush', function(req, res) {
 app.post('/notifyemail', function(req, res) {
   console.log("EMail sent");
   res.status(201).json({});
-  //axios.post('http://localhost:3200/notifyemail', {
-  axios.post('http://172.17.0.5:3200/notifyemail', {
+  axios.post('http://localhost:3200/notifyemail', {
+  //axios.post('http://172.17.0.5:3200/notifyemail', {
     mailTo: req.body.mailTo,
     subject: req.body.subject,
     message: req.body.message,
@@ -266,25 +267,24 @@ app.get('/clients', function(req, res) {
   const userId = authRequest(req);
   console.log(`User ID: ${userId}`);
 
-  let params = Object.assign({}, req.body);
-  params.pool = mssqlPool;
-  store.clients(params)
-  .then(result => { res.status(200).send(JSON.stringify(result.recordset))})
-  .catch(error => { res.status(500).send(JSON.stringify({ "result": -1, "message": error.message, "clientId": ''}))});
+  axios.get(`http://localhost:3600/clients`)
+  //axios.get(`http://172.17.0.9:3600/clients`)
+  .then(response => res.status(200).send(response.data))
+  .catch(error => res.status(500).send({ "result": -1, "message": error.message, "userId": ''}));
 });
 app.post('/clients', function(req, res) {
-  let params = Object.assign({}, req.body);
-  params.pool = mssqlPool;
-  store.clientAddNew(params)
-  .then(result => { res.status(200).send(JSON.stringify({ "result": 0, "message": 'Registered', "clientId": result.output.UID }))})
-  .catch(error => { res.status(500).send(JSON.stringify({ "result": -1, "message": error.message, "clientId": ''}))});
+  axios.post(`http://localhost:3600/clients`, req.body)
+  //axios.post(`http://172.17.0.9:3600/clients`, req.body)
+  .then(response => res.status(200).send(response.uid))
+  .catch(error => res.status(500).send({ "result": -1, "message": error.message, "userId": ''}));
 });
 app.put('/clients/:id', function(req, res) {
-  let params = Object.assign({}, req.body);
-  params.pool = mssqlPool;
-  store.clientUpdate(params)
-  .then(result => { res.status(200).send(JSON.stringify({ "result": 0, "message": 'Updated', "clientId": params.ClientID }))})
-  .catch(error => { res.status(500).send(JSON.stringify({ "result": -1, "message": error.message, "clientId": ''}))});
+  const params = Object.assign({}, req.body);
+  params.uid = req.params.id;
+  axios.put(`http://localhost:3600/clients/${params.uid}`, params)
+  //axios.put(`http://172.17.0.9:3600/clients${params.uid}`, params)
+  .then(result => res.status(200).send({ "result": 0, "message": 'Updated', "clientId": params.uid }))
+  .catch(error => res.status(500).send({ "result": -1, "message": error.message, "userId": ''}));
 });
 //
 // Subdivisions
@@ -300,88 +300,80 @@ app.get('/subdivisions', function(req, res) {
 // Service Requests
 //
 app.get('/requests/types', function(req, res) {
-  const params = Object.assign({}, req.body);
-  params.pool = mssqlPool;
-  store.serviceRequestsTypes(params)
-  .then(result => { res.status(200).send(JSON.stringify(result.recordset))})
-  .catch(error => { res.status(500).send(JSON.stringify({ "result": -1, "message": error.message}))});
+  axios.get(`http://localhost:3400/requests/types`)
+  //axios.get(`http://172.17.0.5:3400/requests/types`)
+  .then(response => res.status(200).send(response.data))
+  .catch(error => res.status(500).send({ "result": -1, "message": error.message}));
 });
 app.post('/requests/upload', function(req, res) {
+  // https://stackoverflow.com/questions/54899605/creating-form-data-from-file-object-in-nodejs
+  console.log("Upload file redirecting ...");
   if (!req.files || Object.keys(req.files).length === 0) {
       return res.status(400).send('No files were uploaded');
   }
-  req.files.file.mv(config.development.dstpath + req.files.file.name, function(error) {
-      if (error) {
-          return res.status(500).send(`{ "error": ${error} }`);
-      }
-      if (!((req.body.clientId) && (req.body.subdivisionId) && (req.body.typeId) && (req.body.dueDate))) {
-          return res.status(400).send(`{ "error": "Не заданы обязательные параметры импорта файла" }`);
-      }
-      xlsx.XLSXToXML(req.files.file.name, req.body.clientId, req.body.subdivisionId, req.body.typeId, req.body.dueDate, req.body.remarks)
-      .then(xml => store.serviceRequestRegisterFile({pool: mssqlPool, xml: xml}))
-      .then(srid => { console.dir(srid); res.status(200).send(JSON.stringify({"srid": srid})); })
-      .catch(error => { console.log("File upload error"); res.status(500).send(`{"error": ${error}}`); });
-  });
+  var file = {
+    name: req.files.file.name,
+    filename: req.files.file.name,
+    size: req.files.file.size,
+    encoding: req.files.file.encoding,
+    tempFilePath: req.files.file.tempFilePath,
+    truncated: req.files.file.truncated,
+    mimetype: req.files.file.mimetype,
+    md5: req.files.file.md5
+  }
+  var formData = new FormData();
+  formData.append('file', Buffer.from(req.files.file.data), file)
+  
+  formData.append('clientId', req.body.clientId)
+  formData.append('subdivisionId', req.body.subdivisionId)
+  formData.append('typeId', req.body.typeId)
+  formData.append('dueDate', req.body.dueDate)
+  formData.append('remarks', req.body.remarks)
+  //formData.submit('http://localhost:3400/requests/upload', function(error, response) {
+  //  console.log(response.statusCode);
+  //});
+  //axios.post('http://172.17.0.5:3400/requests/upload', formData, { headers: formData.getHeaders() })
+  axios.post('http://localhost:3400/requests/upload', formData, { headers: formData.getHeaders() })
+   .then(response => res.status(200).send({"srid": response.data.srid }))
+   .catch(error => res.status(500).send(`{"error": ${error.meesage}}`));
 });
-app.get('/requests',async function(req, res) {
-
-  const params = Object.assign({}, req.body);
-
-  console.log("Docker version");
-
-  params.section = req.query.section;
-  params.criteria = req.query.criteria;
-  params.sortOrder = req.query.sortorder;
-  params.sortType = req.query.sorttype;
-  params.pageNo = req.query.page;
-  params.pageSize = req.query.pagesize;
-  params.pool = mssqlPool;
-
-  try {
-    if (!mssqlPool) {
-      
-      console.log("Try to connect on MS SQL Server");
-      params.pool = await new mssql.ConnectionPool(mssql_config).connect();
-      console.log("MS SQL Server connected successfully");
-    }
-  }
-  catch(error) {
-    console.dir(error)
-  }
-
-  store.serviceRequests(params)
-  .then(result => { res.status(200).send(JSON.stringify(result.recordset))})
-  .catch(error => { res.status(500).send(JSON.stringify({ "result": -1, "message": error.message}))});
+app.get('/requests', function(req, res) {
+  console.log("Get requests redirecting ...");
+  //axios.get(`http://172.17.0.5:3400/requests?section=${req.query.section}&criteria=${req.query.criteria}&sortorder=${req.query.sortorder}&sorttype=${req.query.sorttype}&page=${req.query.page}&pagesize=${req.query.pagesize}`)
+  axios.get(`http://localhost:3400/requests?section=${req.query.section}&criteria=${req.query.criteria}&sortorder=${req.query.sortorder}&sorttype=${req.query.sorttype}&page=${req.query.page}&pagesize=${req.query.pagesize}`)
+  .then(response => res.status(200).send(response.data))
+  .catch(error => res.status(500).send({ "result": -1, "message": error.message}));
 });
 app.get('/requests/:srid', function(req, res) {
-  const params = Object.assign({}, req.body);
-  
-  params.srid = req.params.srid;
-  params.pool = mssqlPool;
-
-  store.serviceRequestsHeader(params)
-  .then(result => { res.status(200).send(JSON.stringify(result.recordset))})
-  .catch(error => { res.status(500).send(JSON.stringify({ "result": -1, "message": error.message}))});
+  axios.get(`http://localhost:3400/requests/${req.params.srid}`)
+  //axios.get(`http://172.17.0.5:3400/requests/${req.params.srid}`)
+  .then(response => res.status(200).send(response.data))
+  .catch(error => res.status(500).send({ "result": -1, "message": error.message}));
 });
 app.put('/requests/:srid', function(req, res) {
-  const params = Object.assign({}, req.body);
-  
-  params.srid = req.params.srid;
-  params.pool = mssqlPool;
-
-  store.serviceRequestsHeaderUpdate(params)
-  .then(result => { res.status(200).send(JSON.stringify({ "result": 0, "message": 'Updated', "serviceRequestID": params.srid }))})
-  .catch(error => { res.status(500).send(JSON.stringify({ "result": -1, "message": error.message, "serviceRequestID": params.srid }))});
+  axios.put(`http://localhost:3400/requests/${req.params.srid}`, req.body)
+  //axios.put(`http://172.17.0.5:3400/requests/${req.params.srid}`, req.body)
+  .then(response => res.status(200).send(response.data))
+  .catch(error => res.status(500).send({ "result": -1, "message": error.message }));
 });
 app.get('/requests/:srid/details', function(req, res) {
-  const params = Object.assign({}, req.body);
-  
-  params.srid = req.params.srid;
-  params.pool = mssqlPool;
-
-  store.serviceRequestsDetails(params)
-  .then(result => { res.status(200).send(JSON.stringify(result.recordset))})
-  .catch(error => { res.status(500).send(JSON.stringify({ "result": -1, "message": error.message}))});
+  axios.get(`http://localhost:3400/requests/${req.params.srid}/details`)
+  //axios.get(`http://172.17.0.5:3400/requests/${req.params.srid}/details`)
+  .then(response => res.status(200).send(response.data))
+  .catch(error => res.status(500).send({ "result": -1, "message": error.message}));
+});
+app.put('/requests/:srid/status', function(req, res) {
+  console.log("Changing service request status ...");
+  const userId = authRequest(req);
+  axios.put(`http://localhost:3400/servicerequests/${req.params.srid}/status`, {
+  //axios.put(`http://172.17.0.5:3400/servicerequests/${req.params.srid}/status`, {
+    status: req.body.status,
+    instructions: req.body.instructions,
+    notification: req.body.notification,
+    userId: userId
+  })
+  .then(response => res.status(200).send(response.data))
+  .catch(error => { console.dir(error); res.status(500).send({ "result": -1, "message": error.message}); });
 });
 
 app.listen(3000);

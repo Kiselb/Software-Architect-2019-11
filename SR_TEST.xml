@@ -1,0 +1,32 @@
+N'<?xml version="1.0" encoding="utf-16"?>
+	<order>
+        	<header>
+                	<clientId>440F03A2-16EB-4A3A-9366-50265F572915</clientId>
+                	<typeId>1</typeId>
+                	<subdivisionId>4D2C8437-9BC9-4851-9A1B-1D712B524BCF</subdivisionId>
+                	<dueDate>11.02.2020</dueDate>
+                	<remarks>-</remarks>
+            </header>
+	<details>
+		<row number="1">
+			<pal></pal>
+			<sku>2200000000000</sku>
+			<quantity>100</quantity>
+			<weight>10</weight>
+			<volume>20</volume>
+			<baseX>30</baseX>
+			<baseY>40</baseY>
+			<skuName>TEST1</skuName>
+		</row>
+		<row number="2">
+			<pal></pal>
+			<sku>2200000000001</sku>
+			<quantity>100</quantity>
+			<weight>10</weight>
+			<volume>20</volume>
+			<baseX>30</baseX>
+			<baseY>40</baseY>
+			<skuName>TEST2</skuName>
+		</row>
+	</details>
+</order>'

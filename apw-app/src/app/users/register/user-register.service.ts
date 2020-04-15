@@ -3,9 +3,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { HttpClient, HttpHeaders, HttpResponse } from  '@angular/common/http';
 import { IUserParams, IUserResult } from '../../data';
-
-//const SERVER_URL: string = "http://localhost:3000/users";
-const SERVER_URL: string = "https://apw.legion.ru:8443/users";
+import {environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -17,6 +15,6 @@ export class UserRegisterService {
   public addUser(params: IUserParams): Observable<IUserResult> {
     const headers = new HttpHeaders();
     headers.set('Content-Type', 'application/json');
-    return this.httpClient.post<IUserResult>(SERVER_URL, params, {headers: headers, reportProgress: false, observe: 'response'}).pipe(map(data => data.body));
+    return this.httpClient.post<IUserResult>(`${environment.backendURL}/users`, params, {headers: headers, reportProgress: false, observe: 'response'}).pipe(map(data => data.body));
   }
 }

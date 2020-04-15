@@ -2,9 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { HttpClient, HttpHeaders, HttpResponse } from  '@angular/common/http';
 import { IClientInfo, IClientResult } from '../../../data';
-
-//const SERVER_URL: string = "http://localhost:3000";
-const SERVER_URL: string = "https://apw.legion.ru:8443";
+import { environment } from '../../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -15,6 +13,6 @@ export class ClientUpdateService {
 
   public update(params: IClientInfo): Observable<IClientResult> {
     const headers = new HttpHeaders().set("Content-Type", "application/json");
-    return this.httpClient.put<IClientResult>(`${SERVER_URL}/clients/${params.ClientID}`, params, {headers});
+    return this.httpClient.put<IClientResult>(`${environment.backendURL}/clients/${params.ClientID}`, params, {headers});
   }
 }

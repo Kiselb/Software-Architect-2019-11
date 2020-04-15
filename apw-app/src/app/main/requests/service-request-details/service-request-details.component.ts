@@ -48,7 +48,7 @@ export class ServiceRequestDetailsComponent implements OnInit {
         this.serviceRequestDetailsService.getDetails(params.get('srid')))
     ).subscribe(
       data => {
-        this.data = data["SR-DETAILS"];
+        this.data = data;
         this.resultsLength = this.data.length;
         console.dir(this.data);
       },

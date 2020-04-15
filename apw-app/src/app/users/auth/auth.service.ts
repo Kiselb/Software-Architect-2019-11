@@ -4,8 +4,7 @@ import { Observable, of } from 'rxjs'
 import { tap, shareReplay, catchError } from 'rxjs/operators';
 import * as moment from "moment";
 
-//const AUTH_URL = "http://localhost:3000/login";
-const AUTH_URL = "https://apw.legion.ru:8443/login";
+import {environment } from '../../../environments/environment';
 
 interface ILogin {
   name: string,
@@ -31,7 +30,7 @@ export class AuthService {
     const login: ILogin = {"name": name, "password": password};
 
     return this.http
-      .post<IAuthResult>(AUTH_URL, login)
+      .post<IAuthResult>(`${environment.backendURL}/login`, login)
       .pipe(tap<IAuthResult>(response => this.setSession(response, name)))
       .pipe(shareReplay())
       .pipe(catchError(error => of(error)));

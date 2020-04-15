@@ -39,9 +39,8 @@ export class RequestsArchiveComponent implements AfterViewInit {
     this.requestsService.getRequests("","DueDate", "DESC", 1, 20, 2).subscribe(
       data => {
         if (data) {
-          this.data = data["SR-HEADERS"];
+          this.data = data;
           this.resultsLength = this.data.length;
-          console.dir(this.data);
           if (srid) {
             this.data.forEach(element =>
               { if (element.ServiceRequestID == srid) {

@@ -92,7 +92,7 @@ exports.clients = function(params) {
             request.input('Criteria', mssql.NVarChar, params.criteria);
 
             const result = await request.execute('dbo.ClientsList');
-            resolve(result);
+            resolve(result.recordset);
         }
         catch(error) {
             reject(error);
