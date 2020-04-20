@@ -12,7 +12,7 @@ export class NewsLetterService {
   addPushSubscriber(sub: any) {
     const headers = new HttpHeaders();
     headers.set('Content-Type', 'application/json');
-    console.log("Subscribe on Push Notifications");
+    console.log(`Subscribe on Push Notifications ${environment.backendURL}/subscribe`);
     return this.http.post<any>(`${environment.backendURL}/subscribe`, sub, {headers: headers, reportProgress: false, observe: 'response'});
   }
 

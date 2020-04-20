@@ -5,6 +5,7 @@ const cors = require('cors'); // npm install --save cors
 const bodyParser = require('body-parser'); // npm install --save body-parser
 const jwt = require('jsonwebtoken'); // npm install --save jsonwebtoken
 const webPush = require('web-push'); //npm install --save web-push
+const config = require('./config.json');
 
 const publicVapidKey = "BHZR7gUHJwp6FcZG4gPmuB8zPk6YZmdGN74MBVLfCZCLDwzQoSPdb0gTbpJJ_KzzZ3Fq-CZU-1wOKMzlIHXUWHc";
 const privateVapidKey = "ObceMkqK2e1_irMbTsAn8bbsEtgGh2LBhSfgiTPQQKM";
@@ -13,9 +14,11 @@ webPush.setVapidDetails('mailto:wfw311@hotmail.com', publicVapidKey, privateVapi
 
 const mssql_config = {
     //server: "10.106.101.113",
-    server: "172.17.0.2",
-    authentication: { options: { userName: "webuser", password: "mvkMVK$@#1245" }},
-    options: { database: "Warehouse", useUTC: false } 
+    //server: "172.27.0.2",
+    server: config.db.host,
+    database: "NotifyPush",
+    authentication: { options: { userName: "webuser", password: "mvkMVKp!@#$1234" }},
+    options: { database: "NotifyPush", useUTC: false } 
 };
 
 var mssqlPool;
@@ -81,25 +84,17 @@ app.post('/subscribe', function(req, res) {
     .then(result => { console.log('OK'); res.status(201).json({ "result": 0, "message": JSON.stringify(req.body.subscription), "userId": ''})})
     .catch(error => { console.log(error); res.status(500).send(JSON.stringify({ "result": -1, "message": error.message, "userId": ''}))});
 });
-app.post('/notifypush', function(req, res) {
+app.post('/notify', function(req, res) {
     const params = {
       pool: mssqlPool,
       userId: req.body.userId
     };
   
     const payload = JSON.stringify({
-      notification: {
-        title: 'Task #2. Notifications',
-        body: 'This notification send through Angular',
-        icon: 'https://www.shareicon.net/data/256x256/2015/10/02/110808_blog_512x512.png',
-        vibrate: [100, 50, 100],
-        data: {
-          url: 'https://otus.ru'
-        }
-      }
+      notification: req.body.notification
     });
-  
-    console.log("Notifing ...");
+    console.dir(req.body);
+    console.log(`Notifing ... ${req.body.userId}`);
 
     getSubscription(params)
     .then(subscription => { console.log(subscription); webPush.sendNotification(JSON.parse(subscription), payload);})

@@ -8,6 +8,8 @@ import { catchError, map, startWith, switchMap } from 'rxjs/operators';
 import { RequestsService } from '../../requests/requests/requests.service';
 import { IServiceRequestHeader } from '../../../data';
 import { ITableServiceRequestHeader } from '../../requests/requests/requests.component';
+import { ServiceRequestHeaderUpdateService } from '../../requests/service-request-edit-dialog/service-request-header-update.service'; //'../service-request-edit-dialog/service-request-header-update.service';
+import { ServiceRequestEditStatusComponent } from '../../requests/service-request-edit-status/service-request-edit-status.component'; //'../service-request-edit-status/service-request-edit-status.component';
 
 @Component({
   selector: 'app-requests-new',
@@ -34,7 +36,10 @@ export class RequestsNewComponent implements AfterViewInit {
   constructor(
     private router: Router,
     private requestsService: RequestsService,
-    public dialog: MatDialog
+    private serviceRequestHeaderUpdateService: ServiceRequestHeaderUpdateService,
+    public dialog: MatDialog,
+    public dialogStatus: MatDialog
+
   ) { }
 
   loadData(srid: string) {
@@ -60,6 +65,20 @@ export class RequestsNewComponent implements AfterViewInit {
   }
   openEditDialog(action: string, row: ITableServiceRequestHeader) {
     this.openServiceRequestDetails(row);
+  }
+  openStatusDialog(row: ITableServiceRequestHeader) {
+    const dialogRef = this.dialogStatus.open(ServiceRequestEditStatusComponent, {
+      width: '500px',
+      data: row
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result.event == 'Save') {
+        this.serviceRequestHeaderUpdateService.setStatus(result.data).subscribe(
+          data => this.loadData(data.serviceRequestID),
+          error => console.dir(error)
+        );
+      }
+    });
   }
   ngAfterViewInit() {
     this.loadData(null);

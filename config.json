@@ -29,5 +29,22 @@
     "production": {
         "config_id": "production",
         "node_port": 8080
+    },
+    "db": {
+        "host": "10.106.101.113",
+        "hostprod": "172.27.0.2"
+    },
+    "notification": {
+        "host": "'http://localhost",
+        "hostprod": "http://172.27.0.8"
+    },
+    "clients": {
+        "host": "http://localhost",
+        "hostprod": "http://172.27.0.9" 
+    },
+    "sr": {
+        "host": "http://localhost",
+        "hostprod": "http://172.27.0.7"
     }
+
 }

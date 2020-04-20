@@ -6,11 +6,14 @@ const cors = require('cors');                       // npm install --save cors
 const bodyParser = require('body-parser');          // npm install --save body-parser
 const jwt = require('jsonwebtoken');                // npm install --save jsonwebtoken
 const fileUpload = require('express-fileupload');   // npm install --save express-fileupload
+const config = require('./config.json');
 
 const mssql_config = {
-    server: "10.106.101.113",
-    //server: "172.17.0.2",
-    authentication: { options: { userName: "webuser", password: "mvkMVK$@#1245" }},
+    //server: "10.106.101.113",
+    //server: "172.27.0.2",
+    server: config.db.host,
+    database: "SKU",
+    authentication: { options: { userName: "webuser", password: "mvkMVKp!@#$1234" }},
     options: { database: "SKU", useUTC: false, enableArithAbort: false } 
 };
 
@@ -52,8 +55,8 @@ app.post('/sku/accept', function(req, res) {
     params.pool = mssqlPool;
   
     SKUAccept(params)
-    .then(xml => { res.status(200).send(JSON.stringify({ "xml": xml })) })
-    .catch(error => { res.status(500).send(JSON.stringify({ "result": -1, "message": error.message}))});
+    .then(xml => { res.status(200).send({ "xml": xml }) })
+    .catch(error => { res.status(500).send({ "result": -1, "message": error.message})});
 });
 
 app.listen(3700);

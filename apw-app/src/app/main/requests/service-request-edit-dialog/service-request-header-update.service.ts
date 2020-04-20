@@ -18,8 +18,14 @@ export class ServiceRequestHeaderUpdateService {
   }
 
   public setStatus(params: IServiceRequestHeader): Observable<IServiceRequestResult> {
+    const payload = {
+      status: params.Status.StatusID,
+      statusname: params.Status.StatusName,
+      instructions: "-",
+      notification: "mvkiselev@legion.ru"
+    }
+    console.dir(payload);
     const headers = new HttpHeaders().set("Content-Type", "application/json");
-    return this.httpClient.put<IServiceRequestResult>(`${environment.backendURL}/requests/${params.ServiceRequestID}/status`, params, {headers});
+    return this.httpClient.put<IServiceRequestResult>(`${environment.backendURL}/requests/${params.ServiceRequestID}/status`, payload, {headers});
   }
-
 }

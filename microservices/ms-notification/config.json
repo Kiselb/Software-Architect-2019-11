@@ -1,0 +1,14 @@
+{
+    "email": {
+        "host": "http://localhost",
+        "hostprod": "http://172.27.0.5"
+    },
+    "push": {
+        "host": "http://localhost",
+        "hostprod": "http://172.27.0.4"
+    },
+    "amqp": {
+        "host": "amqp://10.106.101.113",
+        "hostprod": "amqp://172.27.0.6"
+    }
+}

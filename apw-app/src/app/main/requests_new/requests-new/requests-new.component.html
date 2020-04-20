@@ -17,7 +17,7 @@
         </ng-container>
         <ng-container matColumnDef="StatusCode" [sticky]="true">
             <th mat-header-cell *matHeaderCellDef>Статус</th>
-            <td mat-cell *matCellDef="let row">{{row.Status.StatusCode}}</td>
+            <td mat-cell *matCellDef="let row"><span class="editAction" (click)="openStatusDialog(row)">{{row.Status.StatusCode}}</span></td>
         </ng-container>
         <ng-container matColumnDef="ClientName">
             <th mat-header-cell *matHeaderCellDef>Клиент</th>

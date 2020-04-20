@@ -1,5 +1,6 @@
 const express = require('express');
 const fileUpload = require('express-fileupload'); // npm install --save express-fileupload
+const axios = require('axios');                   // npm install axios
 const path = require('path');
 const mssql = require('mssql');
 const cors = require('cors');                     // npm install --save cors
@@ -10,10 +11,11 @@ const config = require('./config.json');
 const xlsx = require('./import.xlsx');
 
 const mssql_config = {
-    server: "10.106.101.113",
-    //server: "172.17.0.2",
+    //server: "10.106.101.113",
+    //server: "172.27.0.2",
+    server: config.db.host,
     database: "ServiceRequests",
-    authentication: { options: { userName: "webuser", password: "mvkMVK$@#1245" }},
+    authentication: { options: { userName: "webuser", password: "mvkMVKp!@#$1234" }},
     options: { database: "ServiceRequests", useUTC: false, enableArithAbort: false } 
 };
 
@@ -25,11 +27,12 @@ var mssqlPool;
   console.log("MS SQL Server connected successfully");
 })();
 
-sendNotification = function(userId, message) {
+sendNotification = function(userId, notification) {
     return new Promise(async (resolve, reject) => {
         //amqp.connect('amqp://10.106.101.113', function(error, connection) {
-        amqp.connect('amqp://172.17.0.6', function(error, connection) {
-            if (error) {
+        //amqp.connect('amqp://172.27.0.6', function(error, connection) {
+        amqp.connect(config.amqp.host, function(error, connection) {
+          if (error) {
               reject(error);
             }
             console.log("Rabbit MQ Connected successfully");
@@ -37,14 +40,18 @@ sendNotification = function(userId, message) {
               if (error) {
                   reject(error);
                 }
-                var queue = 'hello';
+                var queue = 'usernotification';
             
                 channel.assertQueue(queue, {
                   durable: false
                 });
-            
-                channel.sendToQueue(queue, Buffer.from(message));
-                console.log(" [x] Sent %s", message);
+                
+                const message = {
+                  notification: notification,
+                  userId: userId
+                };
+                channel.sendToQueue(queue, Buffer.from(JSON.stringify(message)));
+                console.log(" [x] Sent %s", JSON.stringify(message));
                 resolve();      
             });
         });
@@ -135,7 +142,8 @@ serviceRequestsSetStatus = function(params) {
         request.input('Instructions', mssql.NVarChar, params.instructions);
 
         const result = await request.execute('dbo.ServiceRequestsSetStatus');
-        resolve(result);
+        console.dir(result);
+        resolve(result.recordset[0]);
     }
     catch(error) {
         reject(error);
@@ -167,15 +175,6 @@ app.use(fileUpload());
 app.use(cors());
 app.use(bodyParser.json());
 
-app.post('/notify', function(req, res) {
-    const serviceRequestId = req.body.serviceRequestId
-
-    console.log("Sending notification message ...");
-
-    res.status(201).json({});
-    console.log('Call notifypush microservice');
-  
-});
 app.get('/requests/types', function(req, res) {
   console.log("Get Requests types ...");
   const params = Object.assign({}, req.body);
@@ -198,8 +197,8 @@ app.get('/requests', function(req, res) {
   params.pool = mssqlPool;
 
   serviceRequests(params)
-  .then(data => res.status(200).send(data[0].DATA))
-  .catch(error => res.status(500).send({ "result": -1, "message": error.message}));
+  .then(data => { console.log("OK"); console.dir(data[0].DATA); res.status(200).send(data[0].DATA); })
+  .catch(error => { console.dir(error); res.status(500).send({ "result": -1, "message": error.message}); });
 });
 app.get('/requests/:srid', function(req, res) {
   console.log("Get service request header ...");
@@ -225,14 +224,26 @@ app.put('/requests/:srid', function(req, res) {
 });
 app.put('/servicerequests/:srid/status', function(req, res) {
   console.log("Update service request status ...");
-  console.dir(req.body);
-  const params = Object.assign({}, req.body);
+  const params = {};
   params.srid = req.params.srid;
+  params.status = req.body.status
   params.pool = mssqlPool;
 
+  const payload = {
+    srid: req.params.srid,
+    message: "Изменение статуса заявки на обслуживание",
+    userId: req.body.userId,
+    notification: req.body.notification,
+    instructions: req.body.instructions,
+  };
+
   serviceRequestsSetStatus(params)
-  .then(data => { res.status(200).send(JSON.stringify(data))})
-  .catch(error => { console.dir(error); res.status(500).send(JSON.stringify({ "result": -1, "message": error.message}))});
+  .then(result => { payload.status = result.StatusName; res.status(200).send(JSON.stringify(result)); })
+  .catch(error => res.status(500).send(JSON.stringify({ "result": -1, "message": error.message})));
+
+  sendNotification(req.body.userID, payload)
+  .then(() => console.log("Message sent"))
+  .catch(error => console.dir(error))
 });
 app.get('/requests/:srid/details', function(req, res) {
   console.log("Get service request details ...");
@@ -258,7 +269,12 @@ app.post('/requests/upload', function(req, res) {
         return res.status(400).send(`{ "error": "Не заданы обязательные параметры импорта файла" }`);
       }
       xlsx.XLSXToXML(req.files.file.name, req.body.clientId, req.body.subdivisionId, req.body.typeId, req.body.dueDate, req.body.remarks)
-      .then(xml => serviceRequestRegisterFile({ pool: mssqlPool, xml: xml }))
+      .then(xml =>
+        //axios.post('http://localhost:3700/sku/accept', {xml: xml})
+        //axios.post('http://172.27.0.10:3700/sku/accept', {xml: xml})
+        axios.post(`${config.sku.host}:3700/sku/accept`, {xml: xml})
+      )
+      .then(response => serviceRequestRegisterFile({ pool: mssqlPool, xml: response.xml }))
       .then(srid => res.status(200).send({ "srid": srid }))
       .catch(error => res.status(500).send(`{"error": ${error.message}}`));
   });

@@ -15,8 +15,8 @@
       <a [routerLink]="['/login']" class="navitem navitem-panel" [class.navitem-visibility]="!userLoggedIn()">Вход</a>
       <a [routerLink]="['/logout']" class="navitem navitem-panel" [class.navitem-visibility]="userLoggedIn()" (click)="logout()">Выход</a>
       <a [routerLink]="" class="navitem navitem-panel" [class.navitem-visibility]="userLoggedIn()" (click)="subscribeToNotifications()">Подписаться</a>
-      <a class="navitem navitem-panel" [class.navitem-visibility]="userLoggedIn()" (click)="notifyPush()">Push</a>
-      <a class="navitem navitem-panel" [class.navitem-visibility]="userLoggedIn()" (click)="notifyEMail()">EMail</a>
+      <!-- <a class="navitem navitem-panel" [class.navitem-visibility]="userLoggedIn()" (click)="notifyPush()">Push</a>
+      <a class="navitem navitem-panel" [class.navitem-visibility]="userLoggedIn()" (click)="notifyEMail()">EMail</a> -->
       <a [routerLink]="['/about']" class="navitem navitem-panel navitem-visibility">О&nbsp;Приложении</a>
   </div>
 

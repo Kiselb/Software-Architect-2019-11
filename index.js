@@ -51,9 +51,11 @@ webPush.setVapidDetails('mailto:wfw311@hotmail.com', publicVapidKey, privateVapi
 //sgMail.setApiKey(SENDGRID_API_KEY);
 
 const mssql_config = {
-    server: "10.106.101.113",
-    //server: "172.17.0.2",
-    authentication: { options: { userName: "webuser", password: "mvkMVK$@#1245" }},
+    //server: "10.106.101.113",
+    //server: "172.27.0.2",
+    server: config.db.host,
+    database: "Warehouse",
+    authentication: { options: { userName: "webuser", password: "mvkMVKp!@#$1234" }},
     options: { database: "Warehouse", useUTC: false } 
 };
 
@@ -171,12 +173,6 @@ app.get('/users', function(req, res) {
     }
   });
 });
-//   let params = Object.assign({}, req.body);
-//   params.pool = mssqlPool;
-//   store.users(params)
-//   .then(result => { res.status(200).send(JSON.stringify(result.recordset))})
-//   .catch(error => { res.status(500).send(JSON.stringify({ "result": -1, "message": error.message, "userId": ''}))});
-// });
 app.post('/users', function(req, res) {
   let params = Object.assign({}, req.body);
   params.pool = mssqlPool;
@@ -195,69 +191,23 @@ app.put('/users/:userId/status', function(req, res) {
   .catch(error => { res.status(500).send(JSON.stringify({ "result": -1, "message": error.message, "userId": params.userId}))});
 });
 app.post('/subscribe', function(req, res) {
+  console.log('Push subscribing: Call push microservice');
+  
   const userId = authRequest(req);
   const subscription = req.body;
 
-  console.log('Push subscribing: Call push microservice');
-  console.log(JSON.stringify(subscription));
-  //res.status(201).json({ "result": 0, "message": "", "userId": userId});
-  
-  axios.post('http://localhost:3100/subscribe', { subscription: subscription, userId: userId})
-  //axios.post('http://172.17.0.4:3100/subscribe', { subscription: req.body, userId: userId})
+  console.log(userId);
+
+  //axios.post('http://localhost:3500/subscribe', { subscription: subscription, userId: userId})
+  //axios.post('http://172.27.0.8:3500/subscribe', { subscription: req.body, userId: userId})
+  axios.post(`${config.notification.host}:3500/subscribe`, { subscription: req.body, userId: userId})
   .then(response => {
     console.log(`Status Code: ${response.status}`);
     res.status(201).json({ "result": 0, "message": JSON.stringify(subscription), "userId": userId});
   })
   .catch(error => {
-    console.log(error);
+    console.log(error.message);
     res.status(500).json({ "result": -1, "message": error, "userId": userId});
-  });
-});
-app.post('/notifypush', function(req, res) {
-  const userId = authRequest(req);  
-  const payload = {
-    notification: {
-      title: 'Task #2. Notifications',
-      body: 'This notification send through Angular',
-      icon: 'https://www.shareicon.net/data/256x256/2015/10/02/110808_blog_512x512.png',
-      vibrate: [100, 50, 100],
-      data: {
-        url: 'https://otus.ru'
-      }
-    },
-    userId: userId
-  };
-
-  res.status(201).json({});
-  console.log('Call notifypush microservice');
-
-  axios.post('http://localhost:3100/notifypush', payload)
-  //axios.post('http://172.17.0.4:3100/notifypush', payload)
-
-  .then(response => {
-    console.log(`Status Code: ${response.status}`);
-    //res.status(201).json({ "response": response.body });
-  })
-  .catch(error => {
-    console.log(error);
-    //res.status(500).json({});
-  });
-});
-app.post('/notifyemail', function(req, res) {
-  console.log("EMail sent");
-  res.status(201).json({});
-  axios.post('http://localhost:3200/notifyemail', {
-  //axios.post('http://172.17.0.5:3200/notifyemail', {
-    mailTo: req.body.mailTo,
-    subject: req.body.subject,
-    message: req.body.message,
-    userId: authRequest(req)
-  })
-  .then(response => {
-    console.log(`Status Code: ${response.status}`);
-  })
-  .catch(error => {
-    console.log(error);
   });
 });
 //
@@ -267,22 +217,25 @@ app.get('/clients', function(req, res) {
   const userId = authRequest(req);
   console.log(`User ID: ${userId}`);
 
-  axios.get(`http://localhost:3600/clients`)
-  //axios.get(`http://172.17.0.9:3600/clients`)
+  //axios.get(`http://localhost:3600/clients`)
+  //axios.get(`http://172.27.0.9:3600/clients`)
+  axios.get(`${config.clients.host}:3600/clients`)
   .then(response => res.status(200).send(response.data))
   .catch(error => res.status(500).send({ "result": -1, "message": error.message, "userId": ''}));
 });
 app.post('/clients', function(req, res) {
-  axios.post(`http://localhost:3600/clients`, req.body)
-  //axios.post(`http://172.17.0.9:3600/clients`, req.body)
+  //axios.post(`http://localhost:3600/clients`, req.body)
+  //axios.post(`http://172.27.0.9:3600/clients`, req.body)
+  axios.post(`${config.clients.host}:3600/clients`, req.body)
   .then(response => res.status(200).send(response.uid))
   .catch(error => res.status(500).send({ "result": -1, "message": error.message, "userId": ''}));
 });
 app.put('/clients/:id', function(req, res) {
   const params = Object.assign({}, req.body);
   params.uid = req.params.id;
-  axios.put(`http://localhost:3600/clients/${params.uid}`, params)
-  //axios.put(`http://172.17.0.9:3600/clients${params.uid}`, params)
+  //axios.put(`http://localhost:3600/clients/${params.uid}`, params)
+  //axios.put(`http://172.27.0.9:3600/clients${params.uid}`, params)
+  axios.put(`${config.clients.host}:3600/clients${params.uid}`, params)
   .then(result => res.status(200).send({ "result": 0, "message": 'Updated', "clientId": params.uid }))
   .catch(error => res.status(500).send({ "result": -1, "message": error.message, "userId": ''}));
 });
@@ -300,8 +253,9 @@ app.get('/subdivisions', function(req, res) {
 // Service Requests
 //
 app.get('/requests/types', function(req, res) {
-  axios.get(`http://localhost:3400/requests/types`)
-  //axios.get(`http://172.17.0.5:3400/requests/types`)
+  //axios.get(`http://localhost:3400/requests/types`)
+  //axios.get(`http://172.27.0.7:3400/requests/types`)
+  axios.get(`${config.sr.host}:3400/requests/types`)
   .then(response => res.status(200).send(response.data))
   .catch(error => res.status(500).send({ "result": -1, "message": error.message}));
 });
@@ -332,48 +286,55 @@ app.post('/requests/upload', function(req, res) {
   //formData.submit('http://localhost:3400/requests/upload', function(error, response) {
   //  console.log(response.statusCode);
   //});
-  //axios.post('http://172.17.0.5:3400/requests/upload', formData, { headers: formData.getHeaders() })
-  axios.post('http://localhost:3400/requests/upload', formData, { headers: formData.getHeaders() })
-   .then(response => res.status(200).send({"srid": response.data.srid }))
+  //axios.post('http://172.27.0.7:3400/requests/upload', formData, { headers: formData.getHeaders() })
+  //axios.post('http://localhost:3400/requests/upload', formData, { headers: formData.getHeaders() })
+  axios.post(`${config.sr.host}:3400/requests/upload`, formData, { headers: formData.getHeaders() })
+  .then(response => res.status(200).send({"srid": response.data.srid }))
    .catch(error => res.status(500).send(`{"error": ${error.meesage}}`));
 });
 app.get('/requests', function(req, res) {
   console.log("Get requests redirecting ...");
-  //axios.get(`http://172.17.0.5:3400/requests?section=${req.query.section}&criteria=${req.query.criteria}&sortorder=${req.query.sortorder}&sorttype=${req.query.sorttype}&page=${req.query.page}&pagesize=${req.query.pagesize}`)
-  axios.get(`http://localhost:3400/requests?section=${req.query.section}&criteria=${req.query.criteria}&sortorder=${req.query.sortorder}&sorttype=${req.query.sorttype}&page=${req.query.page}&pagesize=${req.query.pagesize}`)
+  //axios.get(`http://172.27.0.7:3400/requests?section=${req.query.section}&criteria=${req.query.criteria}&sortorder=${req.query.sortorder}&sorttype=${req.query.sorttype}&page=${req.query.page}&pagesize=${req.query.pagesize}`)
+  //axios.get(`http://localhost:3400/requests?section=${req.query.section}&criteria=${req.query.criteria}&sortorder=${req.query.sortorder}&sorttype=${req.query.sorttype}&page=${req.query.page}&pagesize=${req.query.pagesize}`)
+  axios.get(`${config.sr.host}:3400/requests?section=${req.query.section}&criteria=${req.query.criteria}&sortorder=${req.query.sortorder}&sorttype=${req.query.sorttype}&page=${req.query.page}&pagesize=${req.query.pagesize}`)
   .then(response => res.status(200).send(response.data))
   .catch(error => res.status(500).send({ "result": -1, "message": error.message}));
 });
 app.get('/requests/:srid', function(req, res) {
-  axios.get(`http://localhost:3400/requests/${req.params.srid}`)
-  //axios.get(`http://172.17.0.5:3400/requests/${req.params.srid}`)
+  //axios.get(`http://localhost:3400/requests/${req.params.srid}`)
+  //axios.get(`http://172.27.0.7:3400/requests/${req.params.srid}`)
+  axios.get(`${config.sr.host}:3400/requests/${req.params.srid}`)
   .then(response => res.status(200).send(response.data))
   .catch(error => res.status(500).send({ "result": -1, "message": error.message}));
 });
 app.put('/requests/:srid', function(req, res) {
-  axios.put(`http://localhost:3400/requests/${req.params.srid}`, req.body)
-  //axios.put(`http://172.17.0.5:3400/requests/${req.params.srid}`, req.body)
+  //axios.put(`http://localhost:3400/requests/${req.params.srid}`, req.body)
+  //axios.put(`http://172.27.0.7:3400/requests/${req.params.srid}`, req.body)
+  axios.put(`${config.sr.host}:3400/requests/${req.params.srid}`, req.body)
   .then(response => res.status(200).send(response.data))
   .catch(error => res.status(500).send({ "result": -1, "message": error.message }));
 });
 app.get('/requests/:srid/details', function(req, res) {
-  axios.get(`http://localhost:3400/requests/${req.params.srid}/details`)
-  //axios.get(`http://172.17.0.5:3400/requests/${req.params.srid}/details`)
+  //axios.get(`http://localhost:3400/requests/${req.params.srid}/details`)
+  //axios.get(`http://172.27.0.7:3400/requests/${req.params.srid}/details`)
+  axios.get(`${config.sr.host}:3400/requests/${req.params.srid}/details`)
   .then(response => res.status(200).send(response.data))
   .catch(error => res.status(500).send({ "result": -1, "message": error.message}));
 });
 app.put('/requests/:srid/status', function(req, res) {
   console.log("Changing service request status ...");
   const userId = authRequest(req);
-  axios.put(`http://localhost:3400/servicerequests/${req.params.srid}/status`, {
-  //axios.put(`http://172.17.0.5:3400/servicerequests/${req.params.srid}/status`, {
+  //axios.put(`http://localhost:3400/servicerequests/${req.params.srid}/status`, {
+  //axios.put(`http://172.27.0.7:3400/servicerequests/${req.params.srid}/status`, {
+  axios.put(`${config.sr.host}:3400/servicerequests/${req.params.srid}/status`, {
     status: req.body.status,
+    //statusname: req.body.statusname,
     instructions: req.body.instructions,
     notification: req.body.notification,
     userId: userId
   })
   .then(response => res.status(200).send(response.data))
-  .catch(error => { console.dir(error); res.status(500).send({ "result": -1, "message": error.message}); });
+  .catch(error => res.status(500).send({ "result": -1, "message": error.message}));
 });
 
 app.listen(3000);

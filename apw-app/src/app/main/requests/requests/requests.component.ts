@@ -51,6 +51,8 @@ export class RequestsComponent implements AfterViewInit {
   loadData(srid: string) {
     this.requestsService.getRequests("","DueDate", "DESC", 1, 20, 2).subscribe(
       data => {
+        console.log("data");
+        console.dir(data);
         this.data = data;
         this.resultsLength = this.data.length;
         if (srid) {

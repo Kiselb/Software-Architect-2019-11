@@ -7,10 +7,10 @@ const jwt = require('jsonwebtoken');            // npm install --save jsonwebtok
 const amqp = require('amqplib/callback_api');   // npm install amqplib
 
 const mssql_config = {
-    server: "10.106.101.113",
-    //server: "172.17.0.2",
+    //server: "10.106.101.113",
+    server: "172.27.0.2",
     database: "Clients",
-    authentication: { options: { userName: "webuser", password: "mvkMVK$@#1245" }},
+    authentication: { options: { userName: "webuser", password: "mvkMVKp!@#$1234" }},
     options: { database: "Clients", useUTC: false, enableArithAbort: false } 
 };
 

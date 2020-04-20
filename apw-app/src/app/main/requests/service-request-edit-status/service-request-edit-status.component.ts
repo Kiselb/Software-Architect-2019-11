@@ -37,6 +37,7 @@ export class ServiceRequestEditStatusComponent implements OnInit {
     );
   }
   doSave(){
+    console.dir(this.local_data);
     this.dialogRef.close({event: 'Save', data: this.local_data});
   }
   closeDialog(){
