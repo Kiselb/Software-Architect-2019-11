@@ -32,7 +32,7 @@
     },
     "sku": {
         "host": "http://localhost",
-        "hostprod": "http://172.27.0.9"
+        "hostprod": "http://172.27.0.10"
     },
     "db": {
         "host": "10.106.101.113",
@@ -41,5 +41,9 @@
     "amqp": {
         "host": "amqp://10.106.101.113",
         "hostprod": "amqp://172.27.0.6"
+    },
+    "clients": {
+        "host": "http://localhost",
+        "hostprod": "http://172.27.0.9"
     }
 }

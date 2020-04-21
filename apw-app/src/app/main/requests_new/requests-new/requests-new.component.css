@@ -96,3 +96,13 @@ th.mat-column-position, td.mat-column-position {
     background: khaki;
     cursor: pointer;
 }
+.status {
+    display: inline-block;
+    width: 2em;
+    height: 2em;
+    border-radius: 50%;
+    background: khaki;
+    cursor: pointer;
+    vertical-align: middle;
+    line-height: 2em;
+}

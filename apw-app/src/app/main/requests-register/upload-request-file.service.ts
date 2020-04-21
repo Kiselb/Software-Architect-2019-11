@@ -15,4 +15,8 @@ export class UploadRequestFileService {
   public upload(data: FormData): Observable<any> {
     return this.httpClient.post<any>(`${environment.backendURL}/requests/upload`, data, { reportProgress: false, observe: 'response'});
   }
+
+  public register(data): Observable<any> {
+    return this.httpClient.post<any>(`${environment.backendURL}/requests`, data, { reportProgress: false, observe: 'response'});
+  }
 }

@@ -258,6 +258,7 @@ app.get('/requests/:srid/details', function(req, res) {
 });
 app.post('/requests/upload', function(req, res) {
   console.log("Upload service request file ...");
+
   if (!req.files || Object.keys(req.files).length === 0) {
     return res.status(400).send('No files were uploaded');
   }
@@ -272,12 +273,30 @@ app.post('/requests/upload', function(req, res) {
       .then(xml =>
         //axios.post('http://localhost:3700/sku/accept', {xml: xml})
         //axios.post('http://172.27.0.10:3700/sku/accept', {xml: xml})
-        axios.post(`${config.sku.host}:3700/sku/accept`, {xml: xml})
+        {
+          console.log(xml);
+          return axios.post(`${config.sku.host}:3700/sku/accept`, {xml: xml})
+        }
       )
-      .then(response => serviceRequestRegisterFile({ pool: mssqlPool, xml: response.xml }))
+      .then(response => { console.dir(response.data.xml); return serviceRequestRegisterFile({ pool: mssqlPool, xml: response.data.xml }); })
+      //.then(xml => serviceRequestRegisterFile({ pool: mssqlPool, xml: xml }))
       .then(srid => res.status(200).send({ "srid": srid }))
       .catch(error => res.status(500).send(`{"error": ${error.message}}`));
   });
+});
+app.post('/requests', function(req, res) {
+  console.log("Register service request JSON ...");
+  xlsx.JSONToXML(req.body)
+  .then(xml =>
+    {
+      console.log(xml);
+      return axios.post(`${config.clients.host}:3600/clients/accept`, {xml: xml})
+    }
+  )
+  .then(response => axios.post(`${config.sku.host}:3700/sku/accept`, {xml: response.data.xml}))
+  .then(response => { console.dir(response.data.xml); return serviceRequestRegisterFile({ pool: mssqlPool, xml: response.data.xml }); })
+  .then(srid => res.status(200).send({ "srid": srid }))
+  .catch(error => res.status(500).send(`{"error": ${error.message}}`));
 });
 
 app.listen(3400);

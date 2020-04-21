@@ -31,12 +31,13 @@ SKUAccept = function(params) {
             const request = await new mssql.Request(params.pool);
 
             request.input('XML', mssql.Xml, params.xml);
-            request.output('XML_REACHED', mssql.Xml);
+            request.output('XML_REACHED', mssql.NVarChar(mssql.MAX));
 
             const result = await request.execute('dbo.SKUAccept');
-            resolve(result.output("XML_REACHED"));
+            resolve(result.output["XML_REACHED"]);
         }
         catch(error) {
+            console.log(error)
             reject(error);
         }
     });
@@ -54,9 +55,10 @@ app.post('/sku/accept', function(req, res) {
     const params = Object.assign({}, req.body);
     params.pool = mssqlPool;
   
+    console.log(req.body.xml)
     SKUAccept(params)
-    .then(xml => { res.status(200).send({ "xml": xml }) })
-    .catch(error => { res.status(500).send({ "result": -1, "message": error.message})});
+    .then(xml => { console.log(xml); res.status(200).send({ "xml": xml }) })
+    .catch(error => { console.dir(error); res.status(500).send({ "result": -1, "message": error.message})});
 });
 
 app.listen(3700);

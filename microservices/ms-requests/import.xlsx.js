@@ -69,7 +69,7 @@ function xlsx2xml_SR02(worksheet, clientId, typeId, subdivisionId, dueDate, rema
             <details>\n`;
     worksheet.eachRow(function(row, rowNumber) {
         if (rowNumber !== 1) { // First row contains columns headers
-            xml = xml + `<row>\n<rownumber>${rowNumber}</rownumber>\n`;
+            xml = xml + `<row rownumber="${rowNumber}">\n`;
             row.eachCell({includeEmpty: true}, function(cell, colNumber) {
                 switch(colNumber) {
                     case 1:
@@ -123,5 +123,41 @@ exports.XLSXToXML = function(fileName, clientId, subdivisionId, typeId, dueDate,
             }
         })
         .catch(error => reject(`XLSX Error: ${error}`));
+    });
+}
+exports.JSONToXML = function(json) {
+    return new Promise((resolve, reject) => {
+        try {
+            let rowNumber = 0;
+            let xml =
+            `<?xml version="1.0" encoding="utf-16"?>
+                <order>
+                    <header>
+                        <clientId>${json.clientId}</clientId>
+                        <typeId>${json.typeId}</typeId>
+                        <subdivisionId>${json.subdivisionId}</subdivisionId>
+                        <dueDate>${json.dueDate}</dueDate>
+                        <remarks>${json.remarks ? json.remarks: ''}</remarks>
+                    </header>
+                    <details>\n`;
+            json.details.forEach(element => {
+                rowNumber++;
+                xml = xml + `<row rownumber="${rowNumber}">\n`;
+                if (element.pal) {
+                    xml = xml + `<pal>${element.pal}</pal>\n`;
+                } else {
+                    xml = xml + `<pal></pal>\n`;
+                }
+                xml = xml + `<sku>${element.barCode}</sku>\n`;
+                xml = xml + `<quantity>${element.quantity}</quantity>\n`;
+                xml = xml + `<skuName>${element.name}</skuName>\n`;
+                xml = xml + "</row>\n";
+            });
+            xml = xml + "</details>\n</order>";
+            resolve(xml);
+        }
+        catch(error) {
+            reject(error);
+        }
     });
 }

@@ -290,7 +290,14 @@ app.post('/requests/upload', function(req, res) {
   //axios.post('http://localhost:3400/requests/upload', formData, { headers: formData.getHeaders() })
   axios.post(`${config.sr.host}:3400/requests/upload`, formData, { headers: formData.getHeaders() })
   .then(response => res.status(200).send({"srid": response.data.srid }))
-   .catch(error => res.status(500).send(`{"error": ${error.meesage}}`));
+  .catch(error => res.status(500).send(`{"error": ${error.meesage}}`));
+});
+app.post('/requests', function(req, res) {
+  console.log("Register JSON redirecting ...");
+  console.dir(req.body)
+  axios.post(`${config.sr.host}:3400/requests`, req.body)
+  .then(response => res.status(200).send({"srid": response.data.srid }))
+  .catch(error => res.status(500).send(`{"error": ${error.meesage}}`));
 });
 app.get('/requests', function(req, res) {
   console.log("Get requests redirecting ...");

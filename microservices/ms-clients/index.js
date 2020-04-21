@@ -5,10 +5,12 @@ const cors = require('cors');                   // npm install --save cors
 const bodyParser = require('body-parser');      // npm install --save body-parser
 const jwt = require('jsonwebtoken');            // npm install --save jsonwebtoken
 const amqp = require('amqplib/callback_api');   // npm install amqplib
+const config = require('./config.json');
 
 const mssql_config = {
     //server: "10.106.101.113",
-    server: "172.27.0.2",
+    //server: "172.27.0.2",
+    server: config.db.host,
     database: "Clients",
     authentication: { options: { userName: "webuser", password: "mvkMVKp!@#$1234" }},
     options: { database: "Clients", useUTC: false, enableArithAbort: false } 
@@ -71,6 +73,23 @@ clients = function(params) {
         }
     });
 };
+ClientsAccept = function(params) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const request = await new mssql.Request(params.pool);
+
+            request.input('XML', mssql.Xml, params.xml);
+            request.output('XML_REACHED', mssql.NVarChar(mssql.MAX));
+
+            const result = await request.execute('dbo.ClientsAccept');
+            resolve(result.output["XML_REACHED"]);
+        }
+        catch(error) {
+            console.log(error)
+            reject(error);
+        }
+    });
+}
 
 const app = express();
 
@@ -99,6 +118,15 @@ app.put('/clients/:id', function(req, res) {
     clientUpdate(params)
     .then(result => res.status(200).send({ "result": 0, "message": 'Updated', "clientId": params.uid }))
     .catch(error => res.status(500).send({ "result": -1, "message": error.message, "clientId": ''}));
+});
+app.post('/clients/accept', function(req, res) {
+    const params = Object.assign({}, req.body);
+    params.pool = mssqlPool;
+  
+    console.log(req.body.xml)
+    ClientsAccept(params)
+    .then(xml => { console.log(xml); res.status(200).send({ "xml": xml }) })
+    .catch(error => { console.dir(error); res.status(500).send({ "result": -1, "message": error.message})});
 });
   
 app.listen(3600);
