@@ -15,7 +15,7 @@ function xlsx2xml_SR01(worksheet, clientId, typeId, subdivisionId, dueDate, rema
             <details>\n`;
     worksheet.eachRow(function(row, rowNumber) {
         if (rowNumber !== 1) { // First row contains columns headers
-            xml = xml + `<row>\n<rownumber>${rowNumber}</rownumber>\n`;
+            xml = xml + `<row rownumber="${rowNumber}">\n`;
             row.eachCell({includeEmpty: true}, function(cell, colNumber) {
                 switch(colNumber) {
                     case 1:

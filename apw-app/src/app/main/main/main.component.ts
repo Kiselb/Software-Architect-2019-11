@@ -5,6 +5,7 @@ import { Router, NavigationEnd } from '@angular/router';
 
 import { AuthorizationService } from '../../users/auth/authorization.service';
 import { UploadRequestFileService } from '../requests-register/upload-request-file.service';
+import { ServiceRequestDetailsService } from '../requests/service-request-details/service-request-details.service';
 
 @Component({
   selector: 'app-main',
@@ -23,7 +24,8 @@ export class MainComponent implements OnInit {
     private router: Router,
     private httpClient: HttpClient,
     private authorizationService: AuthorizationService,
-    private uploadRequestFileService: UploadRequestFileService
+    private uploadRequestFileService: UploadRequestFileService,
+    private serviceRequestDetailsService: ServiceRequestDetailsService
   ) { }
 
   test() {
@@ -58,6 +60,29 @@ export class MainComponent implements OnInit {
       ]
     }
     this.uploadRequestFileService.register(data).subscribe();
+  }
+
+  testOperations() {
+    const data = {
+      DUID: "007940D5-D92C-4239-85EF-1684AE68EC4D",
+      CUID: "BB4FE663-5E66-48FE-8503-606A2BB22A36",
+      typeId: 2,
+      operations: [
+        {
+          SIUID: "A2CAF9D3-1425-48C8-89AB-922912E9A271",
+          AUID: "BB1D863A-0116-4583-AB13-66C2CD498ECC",
+          quantity: 1000
+        },
+        {
+          SIUID: "A2CAF9D3-1425-48C8-89AB-922912E9A271",
+          AUID: "3B544145-597B-4AF4-88CA-EB748D21CBA3",
+          quantity: 1000
+        }
+      ]
+    }      
+    this.serviceRequestDetailsService.placeOperations(data).subscribe(data => {
+      console.dir(data);
+    });
   }
 
   ngOnInit() {

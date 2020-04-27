@@ -281,7 +281,7 @@ app.post('/requests/upload', function(req, res) {
       .then(response => { console.dir(response.data.xml); return serviceRequestRegisterFile({ pool: mssqlPool, xml: response.data.xml }); })
       //.then(xml => serviceRequestRegisterFile({ pool: mssqlPool, xml: xml }))
       .then(srid => res.status(200).send({ "srid": srid }))
-      .catch(error => res.status(500).send(`{"error": ${error.message}}`));
+      .catch(error => { console.dir(error); res.status(500).send(`{"error": ${error.message}}`); });
   });
 });
 app.post('/requests', function(req, res) {

@@ -42,6 +42,23 @@ SKUAccept = function(params) {
         }
     });
 }
+SKUMixin = function(data) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const request = await new mssql.Request(mssqlPool);
+
+            request.input('Inventory', mssql.NVarChar(mssql.MAX), JSON.stringify(data));
+            request.output('InventoryReached', mssql.NVarChar(mssql.MAX));
+
+            const result = await request.execute('dbo.SKUMixinInventory');
+            resolve(result.output["InventoryReached"]);
+        }
+        catch(error) {
+            console.log(error)
+            reject(error);
+        }
+    });
+}
 
 const app = express();
 
@@ -60,6 +77,11 @@ app.post('/sku/accept', function(req, res) {
     .then(xml => { console.log(xml); res.status(200).send({ "xml": xml }) })
     .catch(error => { console.dir(error); res.status(500).send({ "result": -1, "message": error.message})});
 });
+app.post('/mixin/inventory', function(req, res) {
+    SKUMixin(req.body)
+    .then(result => { console.log(result); res.status(200).send(JSON.parse(result)) })
+    .catch(error => { console.dir(error); res.status(500).send({ "result": -1, "message": error.message})});
+})
 
 app.listen(3700);
 console.log('SKU Microservice Running on http://localhost:3700');

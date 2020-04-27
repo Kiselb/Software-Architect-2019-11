@@ -45,6 +45,13 @@
     "sr": {
         "host": "http://localhost",
         "hostprod": "http://172.27.0.7"
+    },
+    "state" : {
+        "host": "http://localhost",
+        "hostprod": "http://172.27.0.12"
+    },
+    "operations": {
+        "host": "http://localhost",
+        "hostprod": "http://172.27.0.13"
     }
-
 }

@@ -1,10 +1,16 @@
-<p class="action-header">Клиенты компании</p>
-<div class="table-container" *ngIf="!editMode">
+<p class="action-header" *ngIf="mode == 0">Клиенты компании</p>
+<div class="table-container" *ngIf="mode == 0">
     <table mat-table [dataSource]="clients" matSort matSortActive="ContactName" matSortDisableClear matSortDirection="asc">
         <ng-container matColumnDef="Open" [sticky]="true" *ngIf="menuItemEnabled('8F33328C-8E6D-4B7C-AAA2-EA6FB6E6F3F5') && menuItemEnabled('EB200FE1-D0A3-4EE3-A818-2CFEAEBFD1BF')">
             <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear></th>
             <td mat-cell *matCellDef="let row">
                 <span (click)="editClient(row)" class="editAction"></span>
+            </td>
+        </ng-container>
+        <ng-container matColumnDef="Articles" [sticky]="true">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear></th>
+            <td mat-cell *matCellDef="let row">
+                <span (click)="clientsArticles(row)" class="editAction"></span>
             </td>
         </ng-container>
         <ng-container matColumnDef="Status" [sticky]="true"> <!--*ngIf="menuItemEnabled('8F33328C-8E6D-4B7C-AAA2-EA6FB6E6F3F5') && menuItemEnabled('EB200FE1-D0A3-4EE3-A818-2CFEAEBFD1BF')">-->
@@ -47,9 +53,8 @@
         </tr>
     </table>
 </div>
-<mat-paginator [length]="resultsLength" [pageSize]="40" *ngIf="!editMode"></mat-paginator>
 
-<div *ngIf="editMode && menuItemEnabled('8F33328C-8E6D-4B7C-AAA2-EA6FB6E6F3F5') && menuItemEnabled('EB200FE1-D0A3-4EE3-A818-2CFEAEBFD1BF')" class="client-edit">
+<div *ngIf="mode == 1 && menuItemEnabled('8F33328C-8E6D-4B7C-AAA2-EA6FB6E6F3F5') && menuItemEnabled('EB200FE1-D0A3-4EE3-A818-2CFEAEBFD1BF')" class="client-edit">
     <p class="form-header">{{selectedClient.ClientName}}</p>
     <form class="form-parameters" [formGroup]="fgClientsParameters">
         <label class="form-parameters-contact-header">Контактное лицо:</label><input type="text" formControlName="ctrlContactName" class="form-parameters-contact-value">
@@ -74,3 +79,37 @@
         </div>
     </div>
 </div>
+
+<div *ngIf="mode == 2" class="client-edit">
+    <p class="form-header">Состояние склада клиента</p>
+</div>
+<div class="table-container" *ngIf="mode == 2">
+    <table mat-table [dataSource]="articles" matSort matSortActive="BarCode" matSortDisableClear matSortDirection="asc">
+        <ng-container matColumnDef="Blocked" [sticky]="true">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>Блок</th>
+            <td mat-cell *matCellDef="let row">{{row.Blocked}}</td>
+        </ng-container>
+        <ng-container matColumnDef="InStock" [sticky]="true">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear>Склад</th>
+            <td mat-cell *matCellDef="let row">{{row.InStock}}</td>
+        </ng-container>
+        <ng-container matColumnDef="BarCode" [sticky]="true">
+            <th mat-header-cell *matHeaderCellDef>Штрих-Код</th>
+            <td mat-cell *matCellDef="let row">{{row.BarCode}}</td>
+        </ng-container>
+        <ng-container matColumnDef="SKUName" [sticky]="true">
+            <th mat-header-cell *matHeaderCellDef>Наименование</th>
+            <td mat-cell *matCellDef="let row">{{row.SKUName}}</td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedArticlesColumns; sticky: true"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedArticlesColumns;"
+            [ngClass]="{hovered: row.hovered, highlighted: row.highlighted}"
+            (click)="highlightArticleDrop(); row.highlighted = !row.highlighted"
+            (mouseover)="row.hovered = true"
+            (mouseout)="row.hovered = false">
+        </tr>
+    </table>
+</div>
+<mat-paginator [length]="resultsLength" [pageSize]="40" *ngIf="mode == 0"></mat-paginator>
+<mat-paginator [length]="1000" [pageSize]="1000" *ngIf="mode == 2"></mat-paginator>

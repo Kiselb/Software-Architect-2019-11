@@ -117,7 +117,7 @@ app.put('/clients/:id', function(req, res) {
     params.pool = mssqlPool;
     clientUpdate(params)
     .then(result => res.status(200).send({ "result": 0, "message": 'Updated', "clientId": params.uid }))
-    .catch(error => res.status(500).send({ "result": -1, "message": error.message, "clientId": ''}));
+    .catch(error => { console.dir(error); res.status(500).send({ "result": -1, "message": error.message, "clientId": ''}); });
 });
 app.post('/clients/accept', function(req, res) {
     const params = Object.assign({}, req.body);

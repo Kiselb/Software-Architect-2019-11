@@ -10,11 +10,19 @@ import { IClientInfo, IClientResult } from '../../../data';
 import { ClientUpdateService } from './client-update.service';
 import { AuthorizationService } from './../../../users/auth/authorization.service';
 
+export interface IArticleState {
+  ArticleID: string;
+  Blocked: number;
+  InStock: number;
+  BarCode: string;
+  SKUName: string;
+}
 export interface ISingleHighlighted {
   highlighted?: boolean;
 }
 
 export interface ITableClientInfo extends IClientInfo, ISingleHighlighted {}
+export interface ITableArticleState extends IArticleState, ISingleHighlighted {}
 
 @Component({
   selector: 'app-clients',
@@ -24,7 +32,8 @@ export interface ITableClientInfo extends IClientInfo, ISingleHighlighted {}
 export class ClientsComponent implements OnInit {
 
   clients: ITableClientInfo[];
-  editMode: boolean = false;
+  articles: ITableArticleState[];
+  mode: number = 0;
   selectedClient: ITableClientInfo;
   actionMessage: string = "";
   indicatorHidden: boolean = true;
@@ -44,8 +53,12 @@ export class ClientsComponent implements OnInit {
   highlightDrop() {
     this.clients.map(element => { if (element.highlighted) {element.highlighted  = false }; return element; })
   }
+  highlightArticleDrop() {
+    this.articles.map(element => { if (element.highlighted) {element.highlighted  = false }; return element; })
+  }
   
-displayedColumns: string[] = ['Status', 'ClientName', 'ContactName', 'EMail', 'Phone', 'Address'];
+displayedColumns: string[] = ['Status', 'Open', 'Articles', 'ClientName', 'ContactName', 'EMail', 'Phone', 'Address'];
+displayedArticlesColumns: string[] = ['Blocked', 'InStock', 'BarCode', 'SKUName'];
 
   constructor(
     private router: Router,
@@ -54,13 +67,13 @@ displayedColumns: string[] = ['Status', 'ClientName', 'ContactName', 'EMail', 'P
     private authorizationService: AuthorizationService
   ) {
     if (this.menuItemEnabled('8F33328C-8E6D-4B7C-AAA2-EA6FB6E6F3F5') && this.menuItemEnabled('EB200FE1-D0A3-4EE3-A818-2CFEAEBFD1BF')) {
-      this.displayedColumns = ['Status', 'Open', 'ClientName', 'ContactName', 'EMail', 'Phone', 'Address'];
+      this.displayedColumns = ['Status', 'Open', 'Articles', 'ClientName', 'ContactName', 'EMail', 'Phone', 'Address'];
     }
-   }
+  }
 
   viewClients(criteria: string, presetUID: string) {
     this.selectedClient = null;
-    this.editMode = false;
+    this.mode = 0;
     this.clientsService.getClients(criteria).subscribe(
       data => {
         console.dir(data);
@@ -82,12 +95,18 @@ displayedColumns: string[] = ['Status', 'ClientName', 'ContactName', 'EMail', 'P
   }
   editClient(client: ITableClientInfo) {
     this.selectClient(client);
-    this.editMode = true;
+    this.mode = 1;
     this.fgClientsParameters.controls["ctrlContactName"].setValue(this.selectedClient.ContactName);
     this.fgClientsParameters.controls["ctrlEMail"].setValue(this.selectedClient.EMail);
     this.fgClientsParameters.controls["ctrlPhone"].setValue(this.selectedClient.Phone);
     this.fgClientsParameters.controls["ctrlAddress"].setValue(this.selectedClient.Address);
     return true;
+  }
+  clientsArticles(client: ITableClientInfo) {
+    this.mode = 2;
+    this.clientsService.getClientsArticles(client.ClientID).subscribe(
+      data => { console.dir(data); this.articles = data; }
+    );
   }
   trySave() {
     this.indicatorHidden = false;
@@ -105,7 +124,7 @@ displayedColumns: string[] = ['Status', 'ClientName', 'ContactName', 'EMail', 'P
     this.clientUpdateService.update(data).subscribe(
       response => {
         this.actionMessage = "";
-        setTimeout(() => { this.indicatorHidden = true; this.editMode = false; this.viewClients('*', data.ClientID); }, 4000);
+        setTimeout(() => { this.indicatorHidden = true; this.mode = 0; this.viewClients('*', data.ClientID); }, 4000);
       },
       error => {
         this.actionMessage = error.message;
@@ -114,7 +133,7 @@ displayedColumns: string[] = ['Status', 'ClientName', 'ContactName', 'EMail', 'P
     );
   }
   cancelEdit() {
-    this.editMode = false;
+    this.mode = 0;
   }
   menuItemEnabled(permissionKey: string): boolean {
     return this.authorizationService.getPermissions(permissionKey);

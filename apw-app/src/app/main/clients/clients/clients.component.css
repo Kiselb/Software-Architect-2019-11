@@ -20,6 +20,9 @@
     grid-area: list;
     overflow: scroll;
 }
+.paginator {
+    grid-area: list;
+}
 table {
     min-width: 100%;
 }
@@ -83,6 +86,10 @@ th.mat-column-position, td.mat-column-position {
     max-width: 10em;
 }
 .mat-column-Address {
+    min-width: 50em;
+}
+
+.mat-column-SKUName {
     min-width: 50em;
 }
 .editAction {

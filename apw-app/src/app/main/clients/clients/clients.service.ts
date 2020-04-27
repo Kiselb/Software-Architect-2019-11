@@ -15,4 +15,7 @@ export class ClientsService {
   public getClients(criteria: string): Observable<IClientInfo[]> {
     return this.httpClient.get<IClientInfo[]>(`${environment.backendURL}/clients?criteria=${criteria}`, {observe: 'response'}).pipe(map(data => data.body));
   }
+  public getClientsArticles(clientId): Observable<any> {
+    return this.httpClient.get<IClientInfo[]>(`${environment.backendURL}/inventory/clients/${clientId}`, {observe: 'response'}).pipe(map(response => response.body));
+  }
 }

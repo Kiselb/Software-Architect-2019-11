@@ -234,9 +234,17 @@ app.put('/clients/:id', function(req, res) {
   const params = Object.assign({}, req.body);
   params.uid = req.params.id;
   //axios.put(`http://localhost:3600/clients/${params.uid}`, params)
-  //axios.put(`http://172.27.0.9:3600/clients${params.uid}`, params)
-  axios.put(`${config.clients.host}:3600/clients${params.uid}`, params)
+  //axios.put(`http://172.27.0.9:3600/clients/${params.uid}`, params)
+  axios.put(`${config.clients.host}:3600/clients/${params.uid}`, params)
   .then(result => res.status(200).send({ "result": 0, "message": 'Updated', "clientId": params.uid }))
+  .catch(error => res.status(500).send({ "result": -1, "message": error.message, "userId": ''}));
+});
+//
+// Inventory
+//
+app.get('/inventory/clients/:clientId', function(req, res) {
+  axios.get(`${config.state.host}:3900/inventory/clients/${req.params.clientId}`)
+  .then(response => { console.dir(response.data); res.status(200).send(response.data); })
   .catch(error => res.status(500).send({ "result": -1, "message": error.message, "userId": ''}));
 });
 //
@@ -305,7 +313,7 @@ app.get('/requests', function(req, res) {
   //axios.get(`http://localhost:3400/requests?section=${req.query.section}&criteria=${req.query.criteria}&sortorder=${req.query.sortorder}&sorttype=${req.query.sorttype}&page=${req.query.page}&pagesize=${req.query.pagesize}`)
   axios.get(`${config.sr.host}:3400/requests?section=${req.query.section}&criteria=${req.query.criteria}&sortorder=${req.query.sortorder}&sorttype=${req.query.sorttype}&page=${req.query.page}&pagesize=${req.query.pagesize}`)
   .then(response => res.status(200).send(response.data))
-  .catch(error => res.status(500).send({ "result": -1, "message": error.message}));
+  .catch(error => { console.dir(error); res.status(500).send({ "result": -1, "message": error.message}); });
 });
 app.get('/requests/:srid', function(req, res) {
   //axios.get(`http://localhost:3400/requests/${req.params.srid}`)
@@ -342,6 +350,16 @@ app.put('/requests/:srid/status', function(req, res) {
   })
   .then(response => res.status(200).send(response.data))
   .catch(error => res.status(500).send({ "result": -1, "message": error.message}));
+});
+//
+// Operations
+//
+app.post('/operations', function(req, res) {
+  console.log("Register Operations JSON ...");
+  console.dir(req.body);
+  axios.post(`${config.operations.host}:4000/operations`, req.body)
+  .then(response => { console.dir(response.data); res.status(200).send(response.data); })
+  .catch(error => res.status(500).send(`{"error": ${error.meesage}}`));
 });
 
 app.listen(3000);

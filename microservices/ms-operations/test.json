@@ -1,0 +1,17 @@
+{
+	"DUID": "007940D5-D92C-4239-85EF-1684AE68EC4D",
+	"CUID": "BB4FE663-5E66-48FE-8503-606A2BB22A36",
+	"typeId": 3,
+	"operations": [
+        {
+		    "SIUID": "A2CAF9D3-1425-48C8-89AB-922912E9A271",
+		    "AUID": "BB1D863A-0116-4583-AB13-66C2CD498ECC",
+		    "quantity": 100
+        },
+        {
+		    "SIUID": "A2CAF9D3-1425-48C8-89AB-922912E9A271",
+		    "AUID": "3B544145-597B-4AF4-88CA-EB748D21CBA3",
+		    "quantity": 100
+        }
+    ]
+}

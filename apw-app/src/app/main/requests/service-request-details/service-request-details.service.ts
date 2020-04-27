@@ -19,5 +19,9 @@ export class ServiceRequestDetailsService {
     .pipe(map(response => response.body))
     .pipe(catchError(error => { return throwError(error); }));
   }
-
+  public placeOperations(operations): Observable<any> {
+    return this.httpClient.post<any>(`${environment.backendURL}/operations`, operations, { reportProgress: false, observe: 'response'})
+    .pipe(map(response => response.body))
+    .pipe(catchError(error => { return throwError(error); }));
+  }
 }
